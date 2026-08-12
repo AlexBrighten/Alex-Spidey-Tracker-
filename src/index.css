@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface text-white antialiased;
+    background: #1a4175; /* Retro blue frame */
+    min-height: 100vh;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    image-rendering: pixelated;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #020617;
+    border-left: 2px solid #000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #ef4444;
+    border: 2px solid #000;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #dc2626;
+  }
+}
+
+@layer components {
+  /* 8-bit Retro Card */
+  .pixel-card {
+    background: #2a2a35; /* Dark grey CRT screen */
+    border: 4px solid #000;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.1), 4px 4px 0px rgba(0,0,0,0.3);
+  }
+
+  .pixel-header {
+    background: #020617;
+    border-bottom: 4px solid #000;
+    color: #93c5fd;
+    padding: 12px;
+    text-transform: uppercase;
+    text-align: center;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  /* Input styles */
+  .input-base {
+    @apply w-full bg-[#111] border-4 border-black px-4 py-3 text-white placeholder-white/30
+           focus:outline-none focus:border-brand-500 focus:bg-black transition-none;
+    box-shadow: inset 4px 4px 0 rgba(0,0,0,0.8);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply relative overflow-hidden text-white uppercase rounded-none
+           px-6 py-4 transition-none active:translate-y-1 active:translate-x-1 disabled:opacity-40 disabled:cursor-not-allowed;
+    background: #dc2626;
+    border: 4px solid #000;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.4), inset 4px 4px 0px rgba(255,255,255,0.3), 4px 4px 0px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 0px #000;
+  }
+  
+  .btn-primary:active:not(:disabled) {
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.4), 0px 0px 0px rgba(0,0,0,0.5);
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply bg-[#333] border-4 border-black text-white/80 uppercase rounded-none
+           px-5 py-3 transition-none active:translate-y-1 active:translate-x-1;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.4), inset 4px 4px 0px rgba(255,255,255,0.2), 4px 4px 0px rgba(0,0,0,0.5);
+  }
+  .btn-ghost:active {
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.4), 0px 0px 0px rgba(0,0,0,0.5);
+  }
+
+  /* Category badge */
+  .badge {
+    @apply inline-flex items-center gap-2 text-[8px] uppercase px-3 py-2 border-2 border-black bg-[#444];
+    box-shadow: 2px 2px 0px #000;
+  }
+
+  /* Preset duration button */
+  .preset-btn {
+    @apply px-4 py-3 border-4 border-black text-[9px] uppercase transition-none active:translate-y-1 active:translate-x-1;
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.2), 4px 4px 0px rgba(0,0,0,0.5);
+  }
+  .preset-btn:active {
+    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.4), 0px 0px 0px rgba(0,0,0,0.5);
+  }
+
+  .preset-btn-active {
+    @apply bg-brand-500 text-white;
+    text-shadow: 2px 2px 0px #000;
+  }
+
+  .preset-btn-inactive {
+    @apply bg-[#444] text-white/70;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    color: #ef4444;
+    text-shadow: 2px 2px 0px #000;
+  }
+
+  .timer-glow {
+    text-shadow: 4px 4px 0px #000;
+    color: #ef4444;
+  }
+
+}
