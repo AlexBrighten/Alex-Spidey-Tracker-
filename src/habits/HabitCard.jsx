@@ -7,6 +7,7 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
   const isRelapse     = habit.isRelapse || false;
   const [showDetails, setShowDetails] = useState(false);
   const [tagInput,    setTagInput]    = useState('');
+  const [draftText,   setDraftText]   = useState('');
   const inputRef = useRef(null);
 
   const timestamp = data?.timestamp
@@ -155,16 +156,6 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
                 </button>
               </div>
             </div>
-          ) : habit.detailField.multiline ? (
-            <textarea
-              ref={inputRef}
-              className={`input-base text-sm resize-none ${isRelapse ? 'border-red-500/30 focus:border-red-500' : ''}`}
-              placeholder={habit.detailField.placeholder}
-              value={detailValue}
-              onChange={e => handleDetailChange(e.target.value)}
-              rows={2}
-              onClick={e => e.stopPropagation()}
-            />
           ) : habit.detailField.type === 'time' ? (
             <input
               ref={inputRef}
@@ -174,16 +165,48 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
               onChange={e => handleDetailChange(e.target.value)}
               onClick={e => e.stopPropagation()}
             />
+          ) : detailValue ? (
+            <div className={`flex items-start justify-between gap-3 p-3 rounded-lg border ${isRelapse ? 'bg-red-500/5 border-red-500/20' : 'bg-white/[0.02] border-white/10'}`}>
+              <p className={`text-sm whitespace-pre-wrap flex-1 ${isRelapse ? 'text-red-200' : 'text-white/80'}`}>{detailValue}</p>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleDetailChange(''); }}
+                className="text-white/40 hover:text-red-400 transition-colors p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           ) : (
-            <input
-              ref={inputRef}
-              type="text"
-              className="input-base text-sm"
-              placeholder={habit.detailField.placeholder}
-              value={detailValue}
-              onChange={e => handleDetailChange(e.target.value)}
-              onClick={e => e.stopPropagation()}
-            />
+            <div className="flex flex-col gap-2">
+              {habit.detailField.multiline ? (
+                <textarea
+                  ref={inputRef}
+                  className={`input-base text-sm resize-none ${isRelapse ? 'border-red-500/30 focus:border-red-500' : ''}`}
+                  placeholder={habit.detailField.placeholder}
+                  value={draftText}
+                  onChange={e => setDraftText(e.target.value)}
+                  rows={2}
+                  onClick={e => e.stopPropagation()}
+                />
+              ) : (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="input-base text-sm"
+                  placeholder={habit.detailField.placeholder}
+                  value={draftText}
+                  onChange={e => setDraftText(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); if (draftText.trim()) handleDetailChange(draftText.trim()); } }}
+                  onClick={e => e.stopPropagation()}
+                />
+              )}
+              <button
+                onClick={(e) => { e.stopPropagation(); if (draftText.trim()) { handleDetailChange(draftText.trim()); setDraftText(''); } }}
+                disabled={!draftText.trim()}
+                className="btn-primary self-end px-4 py-1.5 text-xs disabled:opacity-30"
+              >
+                Submit
+              </button>
+            </div>
           )}
         </div>
       )}
