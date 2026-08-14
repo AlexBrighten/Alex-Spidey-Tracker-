@@ -5,7 +5,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
-import { differenceInDays, parseISO } from 'date-fns';
+import { differenceInDays, parseISO, startOfDay, addDays, format } from 'date-fns';
 
 const GOAL     = 800;
 const DEADLINE = new Date('2027-01-01T00:00:00');
@@ -19,21 +19,40 @@ function buildChartData(sessions) {
     return ta - tb;
   });
 
-  const startDate = sorted[0].timestamp?.toDate?.() ?? new Date(sorted[0].timestamp);
-  const totalDays = differenceInDays(DEADLINE, startDate);
+  const startDate = startOfDay(sorted[0].timestamp?.toDate?.() ?? new Date(sorted[0].timestamp));
+  const totalDaysToDeadline = differenceInDays(DEADLINE, startDate) || 1; // avoid division by zero
+
+  const dailyHours = {};
+  sorted.forEach(s => {
+    const d = startOfDay(s.timestamp?.toDate?.() ?? new Date(s.timestamp));
+    const key = format(d, 'yyyy-MM-dd');
+    dailyHours[key] = (dailyHours[key] || 0) + (s.durationMinutes / 60);
+  });
+
+  const lastDate = startOfDay(sorted[sorted.length - 1].timestamp?.toDate?.() ?? new Date(sorted[sorted.length - 1].timestamp));
+  const today = startOfDay(new Date());
+  const endDate = today > lastDate ? today : lastDate;
+  
+  const totalDaysElapsed = differenceInDays(endDate, startDate);
 
   let cumulative = 0;
-  return sorted.map(s => {
-    cumulative += s.durationMinutes / 60;
-    const date      = s.timestamp?.toDate?.() ?? new Date(s.timestamp);
-    const elapsed   = differenceInDays(date, startDate);
-    const pace      = parseFloat(((GOAL * elapsed) / totalDays).toFixed(2));
-    return {
-      label:   date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
-      actual:  parseFloat(cumulative.toFixed(2)),
-      pace:    Math.min(pace, GOAL),
-    };
-  });
+  const data = [];
+
+  for (let i = 0; i <= totalDaysElapsed; i++) {
+    const current = addDays(startDate, i);
+    const key = format(current, 'yyyy-MM-dd');
+    
+    cumulative += (dailyHours[key] || 0);
+    const pace = parseFloat(((GOAL * i) / totalDaysToDeadline).toFixed(2));
+    
+    data.push({
+      label: format(current, 'dd MMM'),
+      actual: parseFloat(cumulative.toFixed(2)),
+      pace: Math.min(pace, GOAL),
+    });
+  }
+
+  return data;
 }
 
 const CustomTooltip = ({ active, payload, label }) => {
