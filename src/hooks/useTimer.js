@@ -6,6 +6,7 @@
 // Uses Web Worker for accurate background ticking.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { sendNotification, requestNotificationPermission } from '../lib/notifications';
 
 const LS_KEY = 'pow_active_session';
 const LS_SETTINGS_KEY = 'pow_timer_settings';
@@ -158,14 +159,9 @@ export function useTimer() {
       localStorage.removeItem(LS_KEY);
       playChime();
       if (workerRef.current) workerRef.current.postMessage('stop');
-      try {
-        if (Notification.permission === 'granted') {
-          new Notification('🎉 Session Complete!', {
-            body: `Your ${cat} session is done. Time to log your progress!`,
-            icon: '/logo.jpg',
-          });
-        }
-      } catch (e) { /* no-op */ }
+      sendNotification('🎉 Session Complete!', {
+        body: `Your ${cat} session is done. Time to log your progress!`,
+      });
       if (onDoneRef.current) onDoneRef.current();
       return;
     }
@@ -184,14 +180,9 @@ export function useTimer() {
           localStorage.removeItem(LS_KEY);
           playChime();
           workerRef.current?.postMessage('stop');
-          try {
-            if (Notification.permission === 'granted') {
-              new Notification('🎉 Session Complete!', {
-                body: 'Your focus session is done!',
-                icon: '/logo.jpg',
-              });
-            }
-          } catch (e) { /* no-op */ }
+          sendNotification('🎉 Session Complete!', {
+            body: 'Your focus session is done!',
+          });
           if (onDoneRef.current) onDoneRef.current();
         }
       }
@@ -214,14 +205,9 @@ export function useTimer() {
     setSitePinWarning(false);
     visibleSinceRef.current = null;
     document.title = 'Focus Tracker';
-    try {
-      if (Notification.permission === 'granted') {
-        new Notification('⏸️ Session Auto-Aborted', {
-          body: reason || 'Session was stopped.',
-          icon: '/logo.jpg',
-        });
-      }
-    } catch (e) { /* no-op */ }
+    sendNotification('⏸️ Session Auto-Aborted', {
+      body: reason || 'Session was stopped.',
+    });
   }, []);
 
   // ── Site-Pin visibility handler ───────────────────────────────────────────
@@ -304,9 +290,7 @@ export function useTimer() {
 
   // ── Request notification permission on mount ───────────────────────────────
   useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
+    requestNotificationPermission();
   }, []);
 
   // ── Public API ─────────────────────────────────────────────────────────────

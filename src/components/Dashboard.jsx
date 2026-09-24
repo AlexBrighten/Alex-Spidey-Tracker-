@@ -5,10 +5,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { Play, LogOut, ChevronDown, History, Pin, PinOff, Settings, X, Plus, Globe } from 'lucide-react';
+import { Play, LogOut, ChevronDown, History, Pin, PinOff, Settings, X, Plus, Globe, Bell } from 'lucide-react';
 import MasterRing from './MasterRing';
 import SessionHistory from './SessionHistory';
 import DayGoals from './DayGoals';
+import { requestNotificationPermission, sendNotification } from '../lib/notifications';
 
 const CATEGORIES = [
   'Core Java & DSA',
@@ -122,6 +123,41 @@ export default function Dashboard({
                 Site Pinning Settings
               </div>
               <div className="p-5 space-y-5">
+                {/* Notifications Settings */}
+                <div className="border-b-2 border-white/10 pb-5">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <Bell className="w-4 h-4 text-[#ef4444]" />
+                      <div>
+                        <p className="text-[9px] font-bold text-white uppercase">Desktop Notifications</p>
+                        <p className="text-[7px] text-white/40 uppercase mt-1">
+                          Alerts for session completion & auto-aborts
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={async () => {
+                          const status = await requestNotificationPermission();
+                          if (status === 'granted') {
+                            alert('Notifications are enabled!');
+                          } else {
+                            alert(`Notification permission: ${status}`);
+                          }
+                        }}
+                        className="btn-ghost px-3 py-2 text-[7px]"
+                      >
+                        Enable
+                      </button>
+                      <button
+                        onClick={() => sendNotification('Test Notification', { body: 'Notifications are working! 🎉' })}
+                        className="btn-ghost px-3 py-2 text-[7px]"
+                      >
+                        Test Alert
+                      </button>
+                    </div>
+                  </div>
+                </div>
                 {/* Master Toggle */}
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
