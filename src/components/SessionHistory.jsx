@@ -28,6 +28,12 @@ const CATEGORY_META = {
     border: 'border-orange-500/25',
     icon: <BookOpen className="w-3 h-3" />,
   },
+  'Product Management': {
+    color: 'text-cyan-400',
+    bg: 'bg-cyan-500/10',
+    border: 'border-cyan-500/25',
+    icon: <BookOpen className="w-3 h-3" />,
+  },
 };
 
 const DEFAULT_META = {

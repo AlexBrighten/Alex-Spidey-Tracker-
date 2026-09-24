@@ -8,6 +8,7 @@ const CATEGORIES = [
   { key: 'MERN Backend',     color: '#22c55e' },
   { key: 'CS Fundamentals',  color: '#a855f7' },
   { key: 'System Design',    color: '#f59e0b' },
+  { key: 'Product Management', color: '#06b6d4' },
 ];
 
 function buildData(sessions) {

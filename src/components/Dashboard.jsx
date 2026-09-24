@@ -1,34 +1,46 @@
 // src/components/Dashboard.jsx
-// Main dashboard: setup form + master ring + history feed
+// Main dashboard: setup form + master ring + day goals + history feed + site pin settings
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { Play, LogOut, ChevronDown, History } from 'lucide-react';
+import { Play, LogOut, ChevronDown, History, Pin, PinOff, Settings, X, Plus, Globe } from 'lucide-react';
 import MasterRing from './MasterRing';
 import SessionHistory from './SessionHistory';
+import DayGoals from './DayGoals';
 
 const CATEGORIES = [
   'Core Java & DSA',
   'MERN Backend',
   'CS Fundamentals',
   'System Design',
+  'Product Management',
 ];
 
 const PRESETS = [30, 45, 60, 90];
 
-export default function Dashboard({ user, stats, sessions, loading, onStart }) {
+export default function Dashboard({
+  user, stats, sessions, loading, onStart,
+  sitePinEnabled, setSitePinEnabled, sitePinTimeout, setSitePinTimeout,
+  sitePins, setSitePin,
+}) {
   const [duration, setDuration]       = useState(45);
   const [customDur, setCustomDur]     = useState('');
   const [useCustom, setUseCustom]     = useState(false);
   const [category, setCategory]       = useState(CATEGORIES[0]);
   const [intendedGoal, setIntendedGoal] = useState('');
   const [formError, setFormError]     = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+  const [newPinCategory, setNewPinCategory] = useState('');
+  const [newPinUrl, setNewPinUrl]     = useState('');
 
   const effectiveDuration = useCustom
     ? parseInt(customDur, 10) || 0
     : duration;
+
+  // Check if selected category has a site pin
+  const selectedCategoryPin = sitePinEnabled ? sitePins[category] : null;
 
   const handleStart = (e) => {
     e.preventDefault();
@@ -45,6 +57,15 @@ export default function Dashboard({ user, stats, sessions, loading, onStart }) {
   };
 
   const handleSignOut = () => signOut(auth);
+
+  const handleAddSitePin = () => {
+    if (newPinCategory && newPinUrl.trim()) {
+      const url = newPinUrl.trim().startsWith('http') ? newPinUrl.trim() : `https://${newPinUrl.trim()}`;
+      setSitePin(newPinCategory, url);
+      setNewPinCategory('');
+      setNewPinUrl('');
+    }
+  };
 
   return (
     <motion.div
@@ -71,6 +92,12 @@ export default function Dashboard({ user, stats, sessions, loading, onStart }) {
             <span className="text-[#93c5fd] text-[8px] uppercase">{user.email}</span>
           </div>
           <button
+            onClick={() => setShowSettings(!showSettings)}
+            className={`btn-ghost flex items-center gap-2 text-[8px] px-3 py-2 ${showSettings ? 'text-[#ef4444]' : ''}`}
+          >
+            <Settings className="w-3 h-3" />
+          </button>
+          <button
             onClick={handleSignOut}
             className="btn-ghost flex items-center gap-2 text-[8px] px-3 py-2"
           >
@@ -79,6 +106,141 @@ export default function Dashboard({ user, stats, sessions, loading, onStart }) {
           </button>
         </div>
       </header>
+
+      {/* Settings Panel — Site Pinning */}
+      <AnimatePresence>
+        {showSettings && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden mb-6"
+          >
+            <div className="pixel-card">
+              <div className="pixel-header flex items-center gap-2">
+                <Pin className="w-4 h-4 text-[#93c5fd]" />
+                Site Pinning Settings
+              </div>
+              <div className="p-5 space-y-5">
+                {/* Master Toggle */}
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-4 h-4 text-[#ef4444]" />
+                    <div>
+                      <p className="text-[9px] font-bold text-white uppercase">Enable Site Pinning</p>
+                      <p className="text-[7px] text-white/40 uppercase mt-1">
+                        Lock specific categories to specific sites
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSitePinEnabled(!sitePinEnabled)}
+                    className={`w-14 h-7 border-4 border-black flex items-center transition-none relative
+                      ${sitePinEnabled ? 'bg-[#22c55e]' : 'bg-[#333]'}`}
+                    style={{ boxShadow: '2px 2px 0px rgba(0,0,0,0.5)' }}
+                  >
+                    <div className={`w-5 h-5 bg-white border-2 border-black absolute transition-none
+                      ${sitePinEnabled ? 'right-0' : 'left-0'}`}
+                    />
+                  </button>
+                </div>
+
+                {sitePinEnabled && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="space-y-4"
+                  >
+                    {/* Abort timeout */}
+                    <div className="flex items-center gap-3">
+                      <span className="text-[8px] text-white/60 uppercase">Abort after:</span>
+                      <div className="flex gap-1.5">
+                        {[2, 3, 4, 5].map(t => (
+                          <button
+                            key={t}
+                            onClick={() => setSitePinTimeout(t)}
+                            className={`preset-btn text-[8px] px-3 py-2
+                              ${sitePinTimeout === t ? 'preset-btn-active' : 'preset-btn-inactive'}`}
+                          >
+                            {t} min
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Current site pins */}
+                    <div>
+                      <p className="text-[8px] text-white/60 uppercase mb-3">Pinned Sites:</p>
+                      {Object.keys(sitePins).length === 0 ? (
+                        <p className="text-[7px] text-white/30 uppercase">No sites pinned yet</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {Object.entries(sitePins).map(([cat, url]) => (
+                            <div key={cat} className="flex items-center gap-2 px-3 py-2 bg-[#111] border-2 border-white/10">
+                              <Pin className="w-3 h-3 text-[#f59e0b] flex-shrink-0" />
+                              <span className="text-[8px] text-white/80 uppercase flex-shrink-0">{cat}</span>
+                              <span className="text-[7px] text-[#93c5fd] truncate flex-1">→ {url}</span>
+                              <button
+                                onClick={() => setSitePin(cat, null)}
+                                className="text-white/30 hover:text-[#ef4444] transition-none flex-shrink-0"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Add new pin */}
+                    <div className="border-t-2 border-white/10 pt-4">
+                      <p className="text-[8px] text-white/60 uppercase mb-3">Add New Pin:</p>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <select
+                            value={newPinCategory}
+                            onChange={e => setNewPinCategory(e.target.value)}
+                            className="input-base appearance-none cursor-pointer pr-8 text-[8px]"
+                          >
+                            <option value="" className="bg-[#1a1a2e]">Select category...</option>
+                            {CATEGORIES.filter(c => !sitePins[c]).map(c => (
+                              <option key={c} value={c} className="bg-[#1a1a2e]">{c}</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-white/30 pointer-events-none" />
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="e.g., scrimba.com"
+                          value={newPinUrl}
+                          onChange={e => setNewPinUrl(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') handleAddSitePin(); }}
+                          className="input-base flex-1 text-[8px]"
+                        />
+                        <button
+                          onClick={handleAddSitePin}
+                          disabled={!newPinCategory || !newPinUrl.trim()}
+                          className="btn-primary px-3 py-0 disabled:opacity-30"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* How it works */}
+                    <div className="text-[7px] text-white/30 uppercase border-t-2 border-white/10 pt-3 space-y-1">
+                      <p>📌 <strong className="text-white/50">How it works:</strong></p>
+                      <p>• When you start a session for a pinned category, the pinned site opens automatically.</p>
+                      <p>• If you come back to this tracker tab for longer than the timeout, the session auto-aborts.</p>
+                      <p>• Categories without a pin have no restrictions — you can move freely across sites.</p>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Master Ring */}
       <section className="pixel-card mb-8">
@@ -91,6 +253,9 @@ export default function Dashboard({ user, stats, sessions, loading, onStart }) {
           : <MasterRing stats={stats} />}
         </div>
       </section>
+
+      {/* Day Goals */}
+      <DayGoals user={user} />
 
       {/* Setup Form */}
       <section className="pixel-card mb-8">
@@ -158,6 +323,16 @@ export default function Dashboard({ user, stats, sessions, loading, onStart }) {
               </select>
               <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
             </div>
+
+            {/* Show pin indicator for selected category */}
+            {selectedCategoryPin && (
+              <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-[#f59e0b]/10 border-2 border-[#f59e0b]/30">
+                <Pin className="w-3 h-3 text-[#f59e0b]" />
+                <span className="text-[7px] text-[#f59e0b] uppercase font-bold">
+                  Pinned to {selectedCategoryPin} — will auto-open on start
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Intended Goal */}
@@ -187,7 +362,7 @@ export default function Dashboard({ user, stats, sessions, loading, onStart }) {
             className="btn-primary w-full flex items-center justify-center gap-4 py-5 text-[10px]"
           >
             <Play className="w-5 h-5 fill-current" />
-            START DEEP WORK
+            {selectedCategoryPin ? 'START & OPEN PINNED SITE' : 'START DEEP WORK'}
           </button>
         </form>
         </div>

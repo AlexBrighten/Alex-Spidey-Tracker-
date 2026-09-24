@@ -42,6 +42,10 @@ export const HABITS = [
     detailField: { key: 'topics',    label: 'What did you cover?',     placeholder: 'e.g., REST API with Express', type: 'tags' },
   },
   {
+    id: 'productManagement', name: 'Product Management', category: 'career', emoji: '📊', hasDetails: true,
+    detailField: { key: 'topics', label: 'What did you study?', placeholder: 'e.g., PRDs, user stories, roadmaps', type: 'tags' },
+  },
+  {
     id: 'techJournal',  name: 'Tech Journal',    category: 'career', emoji: '📓', hasDetails: true,
     detailField: { key: 'entry',     label: "Today's entry",           placeholder: 'What technical insights did you gain?', multiline: true },
   },

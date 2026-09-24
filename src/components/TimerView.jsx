@@ -1,16 +1,19 @@
 // src/components/TimerView.jsx
-// Full-screen distraction-free countdown UI
+// Full-screen distraction-free countdown UI with site-pin warnings
 
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { motion } from 'framer-motion';
-import { Pause, Play, XCircle, ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Pause, Play, XCircle, ExternalLink, Pin, AlertTriangle } from 'lucide-react';
 
 const RADIUS       = 130;
 const STROKE       = 8;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export default function TimerView({ timerState, timeLeft, sessionMeta, totalSeconds, onPause, onResume, onAbort }) {
+export default function TimerView({
+  timerState, timeLeft, sessionMeta, totalSeconds, onPause, onResume, onAbort,
+  activeSitePin, sitePinWarning, sitePinTimeout,
+}) {
   const [portalContainer, setPortalContainer] = useState(null);
   const pipWindowRef = useRef(null);
 
@@ -24,6 +27,13 @@ export default function TimerView({ timerState, timeLeft, sessionMeta, totalSeco
   const handleAbort = () => {
     if (window.confirm('Are you sure you want to kill this session? Progress will not be logged.')) {
       onAbort();
+    }
+  };
+
+  const handleGoBackToPin = () => {
+    if (activeSitePin) {
+      const url = activeSitePin.startsWith('http') ? activeSitePin : `https://${activeSitePin}`;
+      window.open(url, '_blank');
     }
   };
 
@@ -98,12 +108,49 @@ export default function TimerView({ timerState, timeLeft, sessionMeta, totalSeco
   }, []);
 
   const timerContent = (
-    <div className="flex flex-col items-center gap-10 relative z-10 w-full max-w-sm mx-auto h-full justify-center py-8">
+    <div className="flex flex-col items-center gap-8 relative z-10 w-full max-w-sm mx-auto h-full justify-center py-8">
       
       {/* Logo at the top */}
       <div className="w-16 h-16 mb-2 shrink-0">
           <img src="/logo.jpg" alt="Logo" className="w-full h-full object-contain rounded-xl shadow-2xl" />
         </div>
+
+        {/* Site Pin Warning Banner — flashing danger */}
+        <AnimatePresence>
+          {sitePinWarning && activeSitePin && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full"
+            >
+              <div className="bg-[#ef4444] border-4 border-black p-4 text-center space-y-3"
+                   style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+                <motion.div
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 0.8, repeat: Infinity }}
+                  className="flex items-center justify-center gap-2"
+                >
+                  <AlertTriangle className="w-5 h-5 text-black" />
+                  <span className="text-[10px] font-bold text-black uppercase">
+                    ⚠️ You left your pinned site!
+                  </span>
+                </motion.div>
+                <p className="text-[8px] text-black/80 uppercase">
+                  Session will auto-abort in {sitePinTimeout} min if you stay here
+                </p>
+                <button
+                  onClick={handleGoBackToPin}
+                  className="bg-black text-white px-4 py-2 border-4 border-white text-[9px] uppercase font-bold
+                             hover:bg-white hover:text-black transition-none"
+                  style={{ boxShadow: '2px 2px 0px rgba(255,255,255,0.3)' }}
+                >
+                  ↩ GO BACK TO {new URL(activeSitePin.startsWith('http') ? activeSitePin : `https://${activeSitePin}`).hostname.toUpperCase()}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Session metadata */}
         <div className="text-center space-y-3 pixel-card p-4 w-full">
@@ -115,14 +162,27 @@ export default function TimerView({ timerState, timeLeft, sessionMeta, totalSeco
           <p className="text-[#93c5fd] text-[8px] uppercase">{sessionMeta?.intendedGoal}</p>
         </div>
 
+        {/* Site Pin Status (non-warning) */}
+        {activeSitePin && !sitePinWarning && (
+          <div className="flex items-center gap-2 px-3 py-2 bg-[#22c55e]/20 border-2 border-[#22c55e]/40">
+            <Pin className="w-3 h-3 text-[#22c55e]" />
+            <span className="text-[7px] text-[#22c55e] uppercase font-bold">
+              Pinned to {new URL(activeSitePin.startsWith('http') ? activeSitePin : `https://${activeSitePin}`).hostname}
+            </span>
+          </div>
+        )}
+
         {/* SVG Ring + Timer */}
         <div className="relative flex items-center justify-center">
           {/* Glow */}
           <motion.div
-            animate={{ opacity: isPaused ? 0.2 : [0.3, 0.6, 0.3] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            animate={{ opacity: isPaused ? 0.2 : sitePinWarning ? [0.5, 0.8, 0.5] : [0.3, 0.6, 0.3] }}
+            transition={{ duration: sitePinWarning ? 0.5 : 2, repeat: Infinity, ease: 'easeInOut' }}
             className="absolute inset-0 rounded-full blur-3xl"
-            style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%)' }}
+            style={{ background: sitePinWarning
+              ? 'radial-gradient(circle, rgba(239,68,68,0.6) 0%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%)'
+            }}
           />
 
           <svg
@@ -146,7 +206,7 @@ export default function TimerView({ timerState, timeLeft, sessionMeta, totalSeco
               cy={RADIUS + STROKE + 2}
               r={RADIUS}
               fill="none"
-              stroke="url(#timerGradient)"
+              stroke={sitePinWarning ? 'url(#warningGradient)' : 'url(#timerGradient)'}
               strokeWidth={STROKE}
               strokeLinecap="round"
               strokeDasharray={CIRCUMFERENCE}
@@ -159,6 +219,11 @@ export default function TimerView({ timerState, timeLeft, sessionMeta, totalSeco
                 <stop offset="50%"  stopColor="#6366f1" />
                 <stop offset="100%" stopColor="#a855f7" />
               </linearGradient>
+              <linearGradient id="warningGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stopColor="#ef4444" />
+                <stop offset="50%"  stopColor="#f59e0b" />
+                <stop offset="100%" stopColor="#ef4444" />
+              </linearGradient>
             </defs>
           </svg>
 
@@ -166,7 +231,8 @@ export default function TimerView({ timerState, timeLeft, sessionMeta, totalSeco
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <motion.span
               key={`${mm}:${ss}`}
-              className="font-mono text-6xl font-black text-white timer-glow tabular-nums"
+              className={`font-mono text-6xl font-black tabular-nums
+                ${sitePinWarning ? 'text-[#ef4444]' : 'text-white'} timer-glow`}
               animate={{ scale: isPaused ? [1, 0.97, 1] : 1 }}
               transition={{ duration: 1.5, repeat: isPaused ? Infinity : 0 }}
             >

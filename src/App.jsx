@@ -34,7 +34,13 @@ export default function App() {
     return unsub;
   }, []);
 
-  const { timerState, timeLeft, sessionMeta, start, pause, resume, abort } = useTimer();
+  const {
+    timerState, timeLeft, sessionMeta, start, pause, resume, abort,
+    sitePinEnabled, setSitePinEnabled,
+    sitePinTimeout, setSitePinTimeout,
+    sitePins, setSitePin,
+    activeSitePin, sitePinWarning,
+  } = useTimer();
   const { sessions, stats, loading, logSession } = useSessions(user?.uid);
 
   // Trigger modal when timer finishes
@@ -103,6 +109,9 @@ export default function App() {
             onPause={pause}
             onResume={resume}
             onAbort={abort}
+            activeSitePin={activeSitePin}
+            sitePinWarning={sitePinWarning}
+            sitePinTimeout={sitePinTimeout}
           />
         ) : tab === 'focus' ? (
           <Dashboard
@@ -112,6 +121,12 @@ export default function App() {
             sessions={sessions}
             loading={loading}
             onStart={handleStart}
+            sitePinEnabled={sitePinEnabled}
+            setSitePinEnabled={setSitePinEnabled}
+            sitePinTimeout={sitePinTimeout}
+            setSitePinTimeout={setSitePinTimeout}
+            sitePins={sitePins}
+            setSitePin={setSitePin}
           />
         ) : tab === 'habits' ? (
           <HabitTracker key="habits" user={user} />

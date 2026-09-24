@@ -12,6 +12,7 @@ const CATEGORY_COLORS = {
   'MERN Backend':      '#22c55e',
   'CS Fundamentals':   '#a855f7',
   'System Design':     '#f59e0b',
+  'Product Management':'#06b6d4',
 };
 const DEFAULT_COLOR = '#6366f1';
 

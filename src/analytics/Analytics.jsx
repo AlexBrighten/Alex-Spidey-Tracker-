@@ -1,29 +1,41 @@
 // src/analytics/Analytics.jsx
-// Analytics tab — live progress dashboard for Focus + Habits, with drill-down detail views
+// Analytics tab — fully reorganized with sections: Overview → Focus → Habits → Goals
+// Drill-down detail views for habits and focus
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, format, subDays } from 'date-fns';
 import { getLastNDays, calculateStreak, calculatePercentage, calculateCleanStreak } from '../lib/habitUtils';
 import { getDaysInRange } from '../lib/habitFirestore';
 import { HABITS, getRelapseHabits } from '../lib/habits';
-import { ChevronRight, Shield } from 'lucide-react';
+import { ChevronRight, Shield, Zap, CheckSquare, Target, BarChart2, TrendingUp, RefreshCw } from 'lucide-react';
 
-import StatCard      from './StatCard';
-import GoalChart     from './GoalChart';
-import FocusByDay    from './FocusByDay';
-import CategoryDonut from './CategoryDonut';
-import HabitTrend    from './HabitTrend';
-import CategoryBars  from './CategoryBars';
-import HeatmapGrid   from './HeatmapGrid';
+import StatCard         from './StatCard';
+import GoalChart        from './GoalChart';
+import FocusByDay       from './FocusByDay';
+import CategoryDonut    from './CategoryDonut';
+import HabitTrend       from './HabitTrend';
+import CategoryBars     from './CategoryBars';
+import HeatmapGrid      from './HeatmapGrid';
+import WeeklyComparison from './WeeklyComparison';
+import SessionStreakChart from './SessionStreakChart';
+import DayGoalsAnalytics from './DayGoalsAnalytics';
 import DetailedHabitAnalytics from './DetailedHabitAnalytics';
 import DetailedFocusAnalytics from './DetailedFocusAnalytics';
 
 const GOAL       = 800;
 const DEADLINE   = new Date('2027-01-01T00:00:00');
 const TOTAL_HABITS = HABITS.length;
+
+// Analytics section tabs
+const SECTIONS = [
+  { id: 'overview', label: 'Overview', icon: BarChart2 },
+  { id: 'focus',    label: 'Focus',    icon: Zap },
+  { id: 'habits',   label: 'Habits',   icon: CheckSquare },
+  { id: 'goals',    label: 'Goals',    icon: Target },
+];
 
 async function fetchAllSessions(uid) {
   const q = query(
@@ -47,11 +59,25 @@ async function fetchHabitDays(uid) {
 
 function Card({ children, className = '' }) {
   return (
-    <div
-      className={`pixel-card p-5 ${className}`}
-    >
+    <div className={`pixel-card p-5 ${className}`}>
       {children}
     </div>
+  );
+}
+
+function SectionTab({ section, active, onClick }) {
+  const Icon = section.icon;
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-3 py-2 border-4 text-[8px] uppercase font-bold transition-none
+        ${active
+          ? 'bg-[#ef4444] border-black text-white shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
+          : 'bg-[#222] border-black/50 text-white/50 hover:text-white/70'}`}
+    >
+      <Icon className="w-3.5 h-3.5" />
+      {section.label}
+    </button>
   );
 }
 
@@ -60,6 +86,7 @@ export default function Analytics({ user }) {
   const [habitDays,  setHabitDays]  = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState(null);
+  const [section,    setSection]    = useState('overview');
   const [detailView, setDetailView] = useState(null); // null | 'habits' | 'focus'
 
   const load = useCallback(async () => {
@@ -96,6 +123,28 @@ export default function Analytics({ user }) {
   const avgHabitPct       = calculatePercentage(avgHabitScore, TOTAL_HABITS);
   const daysTracked       = habitDays.filter(d => d.score > 0).length;
 
+  // Today's stats
+  const todayStr = format(new Date(), 'yyyy-MM-dd');
+  const todaySessions = sessions.filter(s => {
+    const d = s.timestamp?.toDate?.() ?? new Date(s.timestamp);
+    return format(d, 'yyyy-MM-dd') === todayStr;
+  });
+  const todayMinutes = todaySessions.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
+  const todayHours = todayMinutes / 60;
+
+  // This week stats
+  const weekAgo = subDays(new Date(), 7);
+  const thisWeekSessions = sessions.filter(s => {
+    const d = s.timestamp?.toDate?.() ?? new Date(s.timestamp);
+    return d >= weekAgo;
+  });
+  const thisWeekHours = thisWeekSessions.reduce((sum, s) => sum + (s.durationMinutes || 0), 0) / 60;
+
+  // Average session length
+  const avgSessionMin = sessions.length > 0
+    ? Math.round(totalMinutes / sessions.length)
+    : 0;
+
   // Relapse clean streaks
   const relapseHabits = getRelapseHabits();
   const cleanStreaks   = relapseHabits.map(h => ({
@@ -125,9 +174,14 @@ export default function Analytics({ user }) {
       className="min-h-screen px-4 pt-8 pb-28 max-w-2xl mx-auto"
     >
       {/* Header */}
-      <header className="mb-6 pixel-card p-4">
-        <h1 className="text-[12px] font-bold text-white text-shadow uppercase">Analytics Database</h1>
-        <p className="text-[#93c5fd] text-[7px] mt-1 uppercase">Live Progress</p>
+      <header className="mb-5 pixel-card p-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-[12px] font-bold text-white text-shadow uppercase">Analytics HQ</h1>
+          <p className="text-[#93c5fd] text-[7px] mt-1 uppercase">Live Progress Dashboard</p>
+        </div>
+        <button onClick={load} className="btn-ghost p-2" title="Refresh">
+          <RefreshCw className="w-4 h-4" />
+        </button>
       </header>
 
       <AnimatePresence mode="wait">
@@ -145,118 +199,378 @@ export default function Analytics({ user }) {
           />
         ) : (
           <motion.div
-            key="overview"
+            key="main-analytics"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, x: -30 }}
           >
-            {/* ── Section 1: Hero Stats ──────────────────────────────────────────── */}
-            <div className="grid grid-cols-2 gap-3 mb-5">
-              <StatCard icon="⚡" label="Total Focus Hours"  value={totalHours.toFixed(1)} unit="hrs"      color="brand"   delay={0.05} />
-              <StatCard icon="📋" label="Sessions Logged"    value={sessions.length}                         color="blue"    delay={0.1}  />
-              <StatCard icon="🔥" label="Current Streak"     value={streaks.current}        unit="days"      color="orange"  delay={0.15} />
-              <StatCard icon="🏆" label="Best Streak"        value={streaks.longest}        unit="days"      color="purple"  delay={0.2}  />
-              <StatCard icon="✅" label="Days Tracked"       value={daysTracked}            unit="days"      color="emerald" delay={0.25} />
-              <StatCard
-                icon="📈"
-                label="Needed / Day"
-                value={requiredPerDay.toFixed(2)}
-                unit="hrs/day"
-                color={requiredPerDay <= 4 ? 'emerald' : 'orange'}
-                sub={`${daysLeft} days to goal`}
-                delay={0.3}
-              />
+            {/* Section Tabs */}
+            <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
+              {SECTIONS.map(s => (
+                <SectionTab
+                  key={s.id}
+                  section={s}
+                  active={section === s.id}
+                  onClick={() => setSection(s.id)}
+                />
+              ))}
             </div>
 
-            {/* ── Clean Streak Cards (Relapse Accountability) ─────────────────── */}
-            {cleanStreaks.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 mb-5">
-                {cleanStreaks.map(cs => (
-                  <div key={cs.habit.id}
-                       className="bg-black border-4 p-4 flex flex-col"
-                       style={{
-                         borderColor: cs.current > 7 ? '#22c55e' : '#991b1b',
-                         boxShadow: `4px 4px 0px ${cs.current > 7 ? '#166534' : '#7f1d1d'}`,
-                       }}>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Shield className={`w-4 h-4 ${cs.current > 7 ? 'text-emerald-400' : 'text-red-400'}`} />
-                      <p className="text-white/50 text-[7px] uppercase leading-tight font-bold">
-                        {cs.habit.name}
-                      </p>
-                    </div>
+            {/* ────────────────────────────────────────────────────────────────── */}
+            {/*                        OVERVIEW SECTION                          */}
+            {/* ────────────────────────────────────────────────────────────────── */}
+            {section === 'overview' && (
+              <motion.div
+                key="overview"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-5"
+              >
+                {/* Hero Stats Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <StatCard icon="⚡" label="Total Focus"      value={totalHours.toFixed(1)} unit="hrs"      color="brand"   />
+                  <StatCard icon="📋" label="Sessions"         value={sessions.length}                         color="blue"    />
+                  <StatCard icon="🔥" label="Habit Streak"     value={streaks.current}        unit="days"      color="orange"  />
+                  <StatCard icon="🏆" label="Best Streak"      value={streaks.longest}        unit="days"      color="purple"  />
+                </div>
+
+                {/* Today + This Week highlight */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-black border-4 border-[#22c55e] p-4 flex flex-col" style={{ boxShadow: '4px 4px 0px #166534' }}>
+                    <p className="text-white/50 text-[7px] uppercase font-bold mb-2">Today</p>
                     <div className="flex items-end gap-2 mt-auto">
-                      <span className={`text-[16px] font-bold text-shadow ${cs.current > 7 ? 'text-emerald-400' : cs.current > 0 ? 'text-yellow-400' : 'text-red-400'}`}>
-                        {cs.current}
-                      </span>
-                      <span className="text-white/40 text-[7px] uppercase mb-1">days clean</span>
-                    </div>
-                    <div className="flex items-center gap-3 mt-2 text-[6px] text-white/30 uppercase">
-                      <span>Best: {cs.longest}d</span>
-                      <span className="text-red-400/60">{cs.totalRelapses} relapses</span>
+                      <span className="text-[16px] font-bold text-[#22c55e] text-shadow">{todayHours.toFixed(1)}</span>
+                      <span className="text-white/40 text-[7px] uppercase mb-1">hrs • {todaySessions.length} sessions</span>
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div className="bg-black border-4 border-[#3b82f6] p-4 flex flex-col" style={{ boxShadow: '4px 4px 0px #1e3a5f' }}>
+                    <p className="text-white/50 text-[7px] uppercase font-bold mb-2">This Week</p>
+                    <div className="flex items-end gap-2 mt-auto">
+                      <span className="text-[16px] font-bold text-[#93c5fd] text-shadow">{thisWeekHours.toFixed(1)}</span>
+                      <span className="text-white/40 text-[7px] uppercase mb-1">hrs • {thisWeekSessions.length} sessions</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pace + Needed/Day */}
+                <div className="grid grid-cols-2 gap-3">
+                  <StatCard
+                    icon="📈"
+                    label="Needed / Day"
+                    value={requiredPerDay.toFixed(2)}
+                    unit="hrs/day"
+                    color={requiredPerDay <= 4 ? 'emerald' : 'orange'}
+                    sub={`${daysLeft} days to goal`}
+                  />
+                  <StatCard
+                    icon="⏱️"
+                    label="Avg Session"
+                    value={avgSessionMin}
+                    unit="min"
+                    color="cyan"
+                  />
+                </div>
+
+                {/* 800hr Goal Chart */}
+                <Card>
+                  <GoalChart sessions={sessions} />
+                </Card>
+
+                {/* Clean Streak Cards (Relapse Accountability) */}
+                {cleanStreaks.length > 0 && (
+                  <>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Shield className="w-4 h-4 text-white/40" />
+                      <span className="text-[9px] text-white/60 uppercase font-bold">Accountability</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {cleanStreaks.map(cs => (
+                        <div key={cs.habit.id}
+                             className="bg-black border-4 p-4 flex flex-col"
+                             style={{
+                               borderColor: cs.current > 7 ? '#22c55e' : '#991b1b',
+                               boxShadow: `4px 4px 0px ${cs.current > 7 ? '#166534' : '#7f1d1d'}`,
+                             }}>
+                          <div className="flex items-center gap-2 mb-3">
+                            <Shield className={`w-4 h-4 ${cs.current > 7 ? 'text-emerald-400' : 'text-red-400'}`} />
+                            <p className="text-white/50 text-[7px] uppercase leading-tight font-bold">
+                              {cs.habit.name}
+                            </p>
+                          </div>
+                          <div className="flex items-end gap-2 mt-auto">
+                            <span className={`text-[16px] font-bold text-shadow ${cs.current > 7 ? 'text-emerald-400' : cs.current > 0 ? 'text-yellow-400' : 'text-red-400'}`}>
+                              {cs.current}
+                            </span>
+                            <span className="text-white/40 text-[7px] uppercase mb-1">days clean</span>
+                          </div>
+                          <div className="flex items-center gap-3 mt-2 text-[6px] text-white/30 uppercase">
+                            <span>Best: {cs.longest}d</span>
+                            <span className="text-red-400/60">{cs.totalRelapses} relapses</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Drill-down navigation */}
+                <div className="space-y-2 mt-3">
+                  <button
+                    onClick={() => setDetailView('habits')}
+                    className="w-full pixel-card p-4 flex items-center gap-3 hover:bg-white/[0.02] transition-none group"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <span className="text-lg">📊</span>
+                    <div className="flex-1 text-left">
+                      <p className="text-[9px] font-bold text-white uppercase text-shadow">Detailed Habit Insights</p>
+                      <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Per-habit breakdown, streaks & relapse analysis</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                  </button>
+
+                  <button
+                    onClick={() => setDetailView('focus')}
+                    className="w-full pixel-card p-4 flex items-center gap-3 hover:bg-white/[0.02] transition-none group"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <span className="text-lg">⏱️</span>
+                    <div className="flex-1 text-left">
+                      <p className="text-[9px] font-bold text-white uppercase text-shadow">Focus Session Log</p>
+                      <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Topics covered, session history by date</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                  </button>
+                </div>
+              </motion.div>
             )}
 
-            {/* ── Section 2: Goal Chart ─────────────────────────────────────────── */}
-            <Card delay={0.1} className="mb-5">
-              <GoalChart sessions={sessions} />
-            </Card>
-
-            {/* ── Section 3: Focus by Day + Category Donut ─── */}
-            <div className="grid grid-cols-1 gap-5 mb-5 sm:grid-cols-2">
-              <Card delay={0.15}>
-                <FocusByDay sessions={sessions} />
-              </Card>
-              <Card delay={0.2}>
-                <CategoryDonut sessions={sessions} />
-              </Card>
-            </div>
-
-            {/* ── Section 4: Habit Trend ────────────────────────────────────────── */}
-            <Card delay={0.25} className="mb-5">
-              <HabitTrend habitDays={habitDays} />
-            </Card>
-
-            {/* ── Section 5: Category Bars ─────────────────────────────────────── */}
-            <Card delay={0.3} className="mb-5">
-              <CategoryBars habitDays={habitDays} />
-            </Card>
-
-            {/* ── Section 6: Heatmap ───────────────────────────────────────────── */}
-            <Card delay={0.35} className="mb-5">
-              <HeatmapGrid habitDays={habitDays} />
-            </Card>
-
-            {/* ── Drill-down navigation ────────────────────────────────────────── */}
-            <div className="space-y-3 mb-5">
-              <button
-                onClick={() => setDetailView('habits')}
-                className="w-full pixel-card p-4 flex items-center gap-3 hover:bg-white/[0.02] transition-none group"
-                style={{ cursor: 'pointer' }}
+            {/* ────────────────────────────────────────────────────────────────── */}
+            {/*                         FOCUS SECTION                            */}
+            {/* ────────────────────────────────────────────────────────────────── */}
+            {section === 'focus' && (
+              <motion.div
+                key="focus"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-5"
               >
-                <span className="text-lg">📊</span>
-                <div className="flex-1 text-left">
-                  <p className="text-[9px] font-bold text-white uppercase text-shadow">Detailed Habit Insights</p>
-                  <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Per-habit breakdown, streaks & relapse analysis</p>
+                {/* Focus hero stats */}
+                <div className="grid grid-cols-3 gap-2">
+                  <StatCard icon="⚡" label="Total"    value={totalHours.toFixed(1)} unit="hrs"  color="brand" />
+                  <StatCard icon="📋" label="Sessions" value={sessions.length}                    color="blue"  />
+                  <StatCard icon="⏱️" label="Avg"      value={avgSessionMin}          unit="min"  color="cyan"  />
                 </div>
-                <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
-              </button>
 
-              <button
-                onClick={() => setDetailView('focus')}
-                className="w-full pixel-card p-4 flex items-center gap-3 hover:bg-white/[0.02] transition-none group"
-                style={{ cursor: 'pointer' }}
+                {/* 800hr Goal Chart */}
+                <Card>
+                  <GoalChart sessions={sessions} />
+                </Card>
+
+                {/* Weekly Comparison */}
+                <Card>
+                  <WeeklyComparison sessions={sessions} />
+                </Card>
+
+                {/* Focus by Day */}
+                <Card>
+                  <FocusByDay sessions={sessions} />
+                </Card>
+
+                {/* Category Donut */}
+                <Card>
+                  <CategoryDonut sessions={sessions} />
+                </Card>
+
+                {/* Session Activity Streak */}
+                <Card>
+                  <SessionStreakChart sessions={sessions} />
+                </Card>
+
+                {/* Drill-down to full session log */}
+                <button
+                  onClick={() => setDetailView('focus')}
+                  className="w-full pixel-card p-4 flex items-center gap-3 hover:bg-white/[0.02] transition-none group"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className="text-lg">📝</span>
+                  <div className="flex-1 text-left">
+                    <p className="text-[9px] font-bold text-white uppercase text-shadow">Full Session Log</p>
+                    <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Browse all sessions by date & category</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                </button>
+              </motion.div>
+            )}
+
+            {/* ────────────────────────────────────────────────────────────────── */}
+            {/*                        HABITS SECTION                            */}
+            {/* ────────────────────────────────────────────────────────────────── */}
+            {section === 'habits' && (
+              <motion.div
+                key="habits"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-5"
               >
-                <span className="text-lg">⏱️</span>
-                <div className="flex-1 text-left">
-                  <p className="text-[9px] font-bold text-white uppercase text-shadow">Focus Session Log</p>
-                  <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Topics covered, session history by date</p>
+                {/* Habit hero stats */}
+                <div className="grid grid-cols-2 gap-3">
+                  <StatCard icon="🔥" label="Current Streak" value={streaks.current} unit="days"  color="orange" />
+                  <StatCard icon="🏆" label="Best Streak"    value={streaks.longest} unit="days"  color="purple" />
+                  <StatCard icon="✅" label="Days Tracked"   value={daysTracked}     unit="days"  color="emerald" />
+                  <StatCard icon="📊" label="Avg Score"      value={`${avgHabitPct}%`}              color="blue" />
                 </div>
-                <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
-              </button>
-            </div>
+
+                {/* Habit Trend */}
+                <Card>
+                  <HabitTrend habitDays={habitDays} />
+                </Card>
+
+                {/* Category Averages */}
+                <Card>
+                  <CategoryBars habitDays={habitDays} />
+                </Card>
+
+                {/* 12-Week Heatmap */}
+                <Card>
+                  <HeatmapGrid habitDays={habitDays} />
+                </Card>
+
+                {/* Clean Streak Cards */}
+                {cleanStreaks.length > 0 && (
+                  <>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Shield className="w-4 h-4 text-red-400" />
+                      <span className="text-[9px] text-red-400 uppercase font-bold">Accountability Streaks</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {cleanStreaks.map(cs => (
+                        <div key={cs.habit.id}
+                             className="bg-black border-4 p-4 flex flex-col"
+                             style={{
+                               borderColor: cs.current > 7 ? '#22c55e' : '#991b1b',
+                               boxShadow: `4px 4px 0px ${cs.current > 7 ? '#166534' : '#7f1d1d'}`,
+                             }}>
+                          <div className="flex items-center gap-2 mb-3">
+                            <Shield className={`w-4 h-4 ${cs.current > 7 ? 'text-emerald-400' : 'text-red-400'}`} />
+                            <p className="text-white/50 text-[7px] uppercase leading-tight font-bold">{cs.habit.name}</p>
+                          </div>
+                          <div className="flex items-end gap-2 mt-auto">
+                            <span className={`text-[16px] font-bold text-shadow ${cs.current > 7 ? 'text-emerald-400' : cs.current > 0 ? 'text-yellow-400' : 'text-red-400'}`}>
+                              {cs.current}
+                            </span>
+                            <span className="text-white/40 text-[7px] uppercase mb-1">days clean</span>
+                          </div>
+                          <div className="flex items-center gap-3 mt-2 text-[6px] text-white/30 uppercase">
+                            <span>Best: {cs.longest}d</span>
+                            <span className="text-red-400/60">{cs.totalRelapses} relapses</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Drill-down to detailed habits */}
+                <button
+                  onClick={() => setDetailView('habits')}
+                  className="w-full pixel-card p-4 flex items-center gap-3 hover:bg-white/[0.02] transition-none group"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className="text-lg">🔍</span>
+                  <div className="flex-1 text-left">
+                    <p className="text-[9px] font-bold text-white uppercase text-shadow">Per-Habit Breakdown</p>
+                    <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Individual habit stats, mini heatmaps & triggers</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                </button>
+              </motion.div>
+            )}
+
+            {/* ────────────────────────────────────────────────────────────────── */}
+            {/*                         GOALS SECTION                            */}
+            {/* ────────────────────────────────────────────────────────────────── */}
+            {section === 'goals' && (
+              <motion.div
+                key="goals"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-5"
+              >
+                {/* Day Goals Analytics */}
+                <Card>
+                  <DayGoalsAnalytics uid={user.uid} />
+                </Card>
+
+                {/* 800hr Progress summary */}
+                <div className="grid grid-cols-2 gap-3">
+                  <StatCard
+                    icon="🎯"
+                    label="800hr Progress"
+                    value={`${Math.round((totalHours / GOAL) * 100)}%`}
+                    color="brand"
+                    sub={`${totalHours.toFixed(1)} / ${GOAL} hrs`}
+                  />
+                  <StatCard
+                    icon="📈"
+                    label="Pace Required"
+                    value={requiredPerDay.toFixed(2)}
+                    unit="hrs/day"
+                    color={requiredPerDay <= 4 ? 'emerald' : 'orange'}
+                    sub={`${daysLeft} days remaining`}
+                  />
+                </div>
+
+                {/* Habit completion overview */}
+                <Card>
+                  <div className="flex items-center gap-2 mb-4">
+                    <TrendingUp className="w-4 h-4 text-[#22c55e]" />
+                    <div>
+                      <h3 className="text-[10px] font-bold text-white uppercase text-shadow">Goal Summary</h3>
+                      <p className="text-[7px] text-[#93c5fd] uppercase mt-1">How you're tracking</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Focus hours goal */}
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-[8px] text-white/80 uppercase">800 Hours Focus</span>
+                        <span className="text-[9px] font-bold text-[#ef4444]">{totalHours.toFixed(1)}h / 800h</span>
+                      </div>
+                      <div className="h-4 bg-black border-4 border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+                        <div className="h-full bg-[#ef4444] transition-all duration-500"
+                             style={{ width: `${Math.min(100, (totalHours / GOAL) * 100)}%` }} />
+                      </div>
+                    </div>
+
+                    {/* Habit consistency goal */}
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-[8px] text-white/80 uppercase">Habit Consistency</span>
+                        <span className="text-[9px] font-bold text-[#22c55e]">{avgHabitPct}% avg</span>
+                      </div>
+                      <div className="h-4 bg-black border-4 border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+                        <div className="h-full bg-[#22c55e] transition-all duration-500"
+                             style={{ width: `${avgHabitPct}%` }} />
+                      </div>
+                    </div>
+
+                    {/* Streak goal */}
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-[8px] text-white/80 uppercase">Current Streak</span>
+                        <span className="text-[9px] font-bold text-[#f59e0b]">{streaks.current} days</span>
+                      </div>
+                      <div className="h-4 bg-black border-4 border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+                        <div className="h-full bg-[#f59e0b] transition-all duration-500"
+                             style={{ width: `${Math.min(100, (streaks.current / 30) * 100)}%` }} />
+                      </div>
+                      <p className="text-[6px] text-white/30 uppercase mt-1">Target: 30-day streak</p>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -268,12 +582,17 @@ function LoadingState() {
   return (
     <div className="min-h-screen px-4 pt-8 pb-28 max-w-2xl mx-auto">
       <div className="mb-6 pixel-card p-4 h-16 animate-pulse" />
+      <div className="flex gap-2 mb-5">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-8 w-20 pixel-card animate-pulse" />
+        ))}
+      </div>
       <div className="grid grid-cols-2 gap-4 mb-5">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(4)].map((_, i) => (
           <div key={i} className="pixel-card animate-pulse h-24" />
         ))}
       </div>
-      {[220, 180, 180, 130, 200].map((h, i) => (
+      {[220, 180, 180].map((h, i) => (
         <div key={i} className="pixel-card animate-pulse mb-5"
              style={{ height: h }} />
       ))}
