@@ -44,14 +44,21 @@ When a pinned session starts:
 ### 3. PWA-Ready Notification System
 Integrated a robust notification system using the **Service Worker API**. Instead of relying on the fragile standard `new Notification()`, the app uses `navigator.serviceWorker.ready.showNotification()` when available. This guarantees delivery of session completion and auto-abort alerts across all operating systems, even when running as an installed Desktop PWA.
 
-### 4. Comprehensive Analytics & Data Visualization
+### 4. Automated Health & Wellness Reminders
+Deep work requires physical endurance. The background timer intelligently calculates elapsed session time and pushes non-intrusive Service Worker alerts to keep you fresh:
+- **20m:** 👀 Eye rest (20-20-20 rule)
+- **30m:** 🚰 Hydration check
+- **45m:** 🧘 Posture check
+- **60m:** 🧍 Stretch break
+
+### 5. Comprehensive Analytics & Data Visualization
 Built a full-scale analytics dashboard using `recharts` to visualize progress:
 - **30-Day Heatmap:** Visualizes daily study intensity.
 - **Weekly Trend Comparisons:** Aggregates and compares time spent per category week-over-week.
 - **Habit/Relapse Tracking:** A 12-week GitHub-style contribution calendar for habit adherence.
 - **Day Goals:** A granular daily task manager synced directly to Firebase, displaying 14-day completion rate trends.
 
-### 5. Persistent State & Real-time Sync
+### 6. Persistent State & Real-time Sync
 - Active sessions are continuously serialized to `localStorage` to survive accidental page refreshes.
 - Completed sessions, day goals, and habit logs are synced in real-time to **Firebase Firestore**, architected with multi-user isolation via Firebase Auth.
 
