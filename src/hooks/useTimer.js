@@ -73,6 +73,7 @@ export function useTimer() {
   const workerRef         = useRef(null);
   const sitePinTimerRef   = useRef(null); // timeout for site-pin auto-abort
   const visibleSinceRef   = useRef(null); // when tracker tab became visible during site-pin
+  const lastReminderMinuteRef = useRef(0);
 
   // Persist settings
   useEffect(() => {
@@ -154,6 +155,26 @@ export function useTimer() {
       ? `(${mm}:${ss}) ${cat} | Focus Tracker`
       : 'Session Complete! | Focus Tracker';
 
+    if (meta && remaining > 0) {
+      const elapsedSeconds = (meta.durationMinutes * 60) - remaining;
+      const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+
+      if (elapsedMinutes > lastReminderMinuteRef.current) {
+        lastReminderMinuteRef.current = elapsedMinutes;
+        if (elapsedMinutes > 0) {
+          if (elapsedMinutes % 60 === 0) {
+            sendNotification('🧍 Stretch Break!', { body: 'Time to stand up and stretch your legs!' });
+          } else if (elapsedMinutes % 45 === 0) {
+            sendNotification('🧘 Posture Check!', { body: 'Sit up straight and relax your shoulders.' });
+          } else if (elapsedMinutes % 30 === 0) {
+            sendNotification('🚰 Hydration Check!', { body: 'Take a sip of water to stay sharp.' });
+          } else if (elapsedMinutes % 20 === 0) {
+            sendNotification('👀 Eye Rest!', { body: '20-20-20 rule: Look 20 feet away for 20 seconds.' });
+          }
+        }
+      }
+    }
+
     if (remaining <= 0) {
       setTimerState('done');
       localStorage.removeItem(LS_KEY);
@@ -175,6 +196,27 @@ export function useTimer() {
       if (endTimeRef.current && document.visibilityState === 'hidden') {
         const remaining = Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000));
         setTimeLeft(remaining);
+        
+        const meta = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+        if (meta && remaining > 0) {
+          const elapsedSeconds = (meta.durationMinutes * 60) - remaining;
+          const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+
+          if (elapsedMinutes > lastReminderMinuteRef.current) {
+            lastReminderMinuteRef.current = elapsedMinutes;
+            if (elapsedMinutes > 0) {
+              if (elapsedMinutes % 60 === 0) {
+                sendNotification('🧍 Stretch Break!', { body: 'Time to stand up and stretch your legs!' });
+              } else if (elapsedMinutes % 45 === 0) {
+                sendNotification('🧘 Posture Check!', { body: 'Sit up straight and relax your shoulders.' });
+              } else if (elapsedMinutes % 30 === 0) {
+                sendNotification('🚰 Hydration Check!', { body: 'Take a sip of water to stay sharp.' });
+              } else if (elapsedMinutes % 20 === 0) {
+                sendNotification('👀 Eye Rest!', { body: '20-20-20 rule: Look 20 feet away for 20 seconds.' });
+              }
+            }
+          }
+        }
         if (remaining <= 0) {
           setTimerState('done');
           localStorage.removeItem(LS_KEY);
@@ -271,7 +313,12 @@ export function useTimer() {
       if (Date.now() < data.endTime) {
         endTimeRef.current = data.endTime;
         setSessionMeta({ category: data.category, intendedGoal: data.intendedGoal, durationMinutes: data.durationMinutes });
-        setTimeLeft(Math.round((data.endTime - Date.now()) / 1000));
+        const remaining = Math.round((data.endTime - Date.now()) / 1000);
+        setTimeLeft(remaining);
+        
+        const elapsedSeconds = (data.durationMinutes * 60) - remaining;
+        lastReminderMinuteRef.current = Math.floor(elapsedSeconds / 60);
+
         setTimerState('running');
         rafRef.current = requestAnimationFrame(doTick);
         if (workerRef.current) workerRef.current.postMessage('start');
@@ -299,6 +346,7 @@ export function useTimer() {
     onDoneRef.current = onDone;
     const endTime = Date.now() + durationMinutes * 60 * 1000;
     endTimeRef.current = endTime;
+    lastReminderMinuteRef.current = 0;
 
     // Check if this category has a site pin
     const pinnedUrl = sitePinEnabled ? sitePins[category] : null;
