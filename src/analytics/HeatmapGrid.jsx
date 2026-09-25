@@ -11,12 +11,12 @@ const DAY_NAMES = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 function getColor(score, hasData) {
   if (!hasData) return 'rgba(255,255,255,0.04)';
-  if (score === 0)              return 'rgba(255,255,255,0.06)';
+  if (score === 0)              return 'rgba(0,0,0,0.06)';
   const pct = score / TOTAL;
   if (pct >= 0.85)  return '#22c55e';  // green
   if (pct >= 0.65)  return '#a855f7';  // purple
   if (pct >= 0.40)  return '#f59e0b';  // amber
-  return '#ef4444';                      // red
+  return '#dc2626';                      // red
 }
 
 function buildGrid(habitDays) {
@@ -65,8 +65,8 @@ export default function HeatmapGrid({ habitDays }) {
   return (
     <div>
       <div className="mb-6">
-        <h3 className="text-[10px] font-bold text-white uppercase text-shadow">12-Week Habit Heatmap</h3>
-        <p className="text-[7px] text-[#93c5fd] uppercase mt-1">Daily consistency</p>
+        <h3 className="text-sm font-bold text-black uppercase ">12-Week Habit Heatmap</h3>
+        <p className="text-xs text-black/50 uppercase mt-1">Daily consistency</p>
       </div>
 
       <div className="overflow-x-auto">
@@ -77,7 +77,7 @@ export default function HeatmapGrid({ habitDays }) {
               const ml = monthLabels.find(m => m.wi === wi);
               return (
                 <div key={wi} className="w-4 text-center">
-                  {ml && <span className="text-[6px] uppercase text-white/50">{ml.label}</span>}
+                  {ml && <span className="text-xs uppercase text-black/50">{ml.label}</span>}
                 </div>
               );
             })}
@@ -86,7 +86,7 @@ export default function HeatmapGrid({ habitDays }) {
           {/* Day rows */}
           {Array.from({ length: 7 }, (_, di) => (
             <div key={di} className="flex items-center gap-1">
-              <span className="text-[6px] uppercase text-white/40 w-4 text-right">{DAY_NAMES[di]}</span>
+              <span className="text-xs uppercase text-black/40 w-4 text-right">{DAY_NAMES[di]}</span>
               {grid.map((week, wi) => {
                 const cell = week[di];
                 if (!cell) return <div key={wi} className="w-4 h-4" />;
@@ -95,7 +95,7 @@ export default function HeatmapGrid({ habitDays }) {
                 return (
                   <div
                     key={wi}
-                    className="w-4 h-4 cursor-pointer transition-none hover:border hover:border-white relative"
+                    className="w-4 h-4 cursor-pointer transition-none hover:border hover:border-black relative"
                     style={{ backgroundColor: color, opacity }}
                     onMouseEnter={(e) => setTooltip({ cell, x: e.clientX, y: e.clientY })}
                     onMouseLeave={() => setTooltip(null)}
@@ -107,11 +107,11 @@ export default function HeatmapGrid({ habitDays }) {
 
           {/* Legend */}
           <div className="flex items-center gap-2 pt-3 pl-5">
-            <span className="text-[6px] uppercase text-white/40">Less</span>
-            {['rgba(255,255,255,0.06)', '#ef4444', '#f59e0b', '#a855f7', '#22c55e'].map((c, i) => (
+            <span className="text-xs uppercase text-black/40">Less</span>
+            {['rgba(0,0,0,0.06)', '#dc2626', '#f59e0b', '#a855f7', '#22c55e'].map((c, i) => (
               <div key={i} className="w-3 h-3 border border-black" style={{ backgroundColor: c }} />
             ))}
-            <span className="text-[6px] uppercase text-white/40">More</span>
+            <span className="text-xs uppercase text-black/40">More</span>
           </div>
         </div>
       </div>
@@ -119,13 +119,13 @@ export default function HeatmapGrid({ habitDays }) {
       {/* Tooltip */}
       {tooltip && (
         <div
-          className="fixed z-50 pointer-events-none bg-black border-4 border-white p-2 shadow-[4px_4px_0px_#ef4444]"
+          className="fixed z-50 pointer-events-none bg-gray-100 border-[3px] border-black p-2 shadow-[4px_4px_0px_#dc2626]"
           style={{ left: tooltip.x + 12, top: tooltip.y - 48 }}
         >
-          <p className="text-[#93c5fd] text-[7px] uppercase">{tooltip.cell.display}</p>
+          <p className="text-black/50 text-xs uppercase">{tooltip.cell.display}</p>
           {tooltip.cell.hasData
-            ? <p className="text-white font-bold mt-1 text-[7px] uppercase">{tooltip.cell.score}/{TOTAL} HABITS</p>
-            : <p className="text-white/40 mt-1 text-[7px] uppercase">NO DATA</p>}
+            ? <p className="text-black font-bold mt-1 text-xs uppercase">{tooltip.cell.score}/{TOTAL} HABITS</p>
+            : <p className="text-black/40 mt-1 text-xs uppercase">NO DATA</p>}
         </div>
       )}
     </div>

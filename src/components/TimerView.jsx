@@ -124,7 +124,7 @@ export default function TimerView({
               exit={{ opacity: 0, scale: 0.95 }}
               className="w-full"
             >
-              <div className="bg-[#ef4444] border-4 border-black p-4 text-center space-y-3"
+              <div className="bg-[#ef4444] border-[3px] border-black p-4 text-center space-y-3"
                    style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
                 <motion.div
                   animate={{ opacity: [1, 0.5, 1] }}
@@ -132,16 +132,16 @@ export default function TimerView({
                   className="flex items-center justify-center gap-2"
                 >
                   <AlertTriangle className="w-5 h-5 text-black" />
-                  <span className="text-[10px] font-bold text-black uppercase">
+                  <span className="text-sm font-bold text-black uppercase">
                     ⚠️ You left your pinned site!
                   </span>
                 </motion.div>
-                <p className="text-[8px] text-black/80 uppercase">
+                <p className="text-xs text-black/80 uppercase">
                   Session will auto-abort in {sitePinTimeout} min if you stay here
                 </p>
                 <button
                   onClick={handleGoBackToPin}
-                  className="bg-black text-white px-4 py-2 border-4 border-white text-[9px] uppercase font-bold
+                  className="bg-black text-white px-4 py-2 border-[3px] border-white text-sm uppercase font-bold
                              hover:bg-white hover:text-black transition-none"
                   style={{ boxShadow: '2px 2px 0px rgba(255,255,255,0.3)' }}
                 >
@@ -154,19 +154,19 @@ export default function TimerView({
 
         {/* Session metadata */}
         <div className="text-center space-y-3 pixel-card p-4 w-full">
-          <div className="inline-flex items-center gap-3 px-3 py-2 bg-[#ef4444] border-4 border-black text-white text-[8px] uppercase font-bold shadow-[2px_2px_0px_rgba(0,0,0,0.5)]">
-            <span className={`w-3 h-3 border-2 border-black ${isPaused ? 'bg-yellow-400' : 'bg-black animate-pulse'}`} />
+          <div className="inline-flex items-center gap-3 px-3 py-2 bg-[#ef4444] border-[3px] border-black text-white text-xs uppercase font-bold shadow-[2px_2px_0px_rgba(0,0,0,0.5)]">
+            <span className={`w-3 h-3 border-[3px] border-black ${isPaused ? 'bg-yellow-400' : 'bg-black animate-pulse'}`} />
             {isPaused ? 'PAUSED' : 'DEEP WORK ACTIVE'}
           </div>
-          <h2 className="text-[12px] font-bold text-white uppercase text-shadow mt-4">{sessionMeta?.category}</h2>
-          <p className="text-[#93c5fd] text-[8px] uppercase">{sessionMeta?.intendedGoal}</p>
+          <h2 className="text-lg font-bold text-white uppercase mt-4">{sessionMeta?.category}</h2>
+          <p className="text-white/60 text-sm uppercase font-bold">{sessionMeta?.intendedGoal}</p>
         </div>
 
         {/* Site Pin Status (non-warning) */}
         {activeSitePin && !sitePinWarning && (
           <div className="flex items-center gap-2 px-3 py-2 bg-[#22c55e]/20 border-2 border-[#22c55e]/40">
             <Pin className="w-3 h-3 text-[#22c55e]" />
-            <span className="text-[7px] text-[#22c55e] uppercase font-bold">
+            <span className="text-xs text-[#22c55e] uppercase font-bold">
               Pinned to {new URL(activeSitePin.startsWith('http') ? activeSitePin : `https://${activeSitePin}`).hostname}
             </span>
           </div>
@@ -248,7 +248,7 @@ export default function TimerView({
         <div className="flex items-center justify-center gap-4 w-full">
           <button
             onClick={isPaused ? onResume : onPause}
-            className="btn-primary flex items-center gap-3 px-6 py-4 text-[10px] flex-1 justify-center"
+            className="btn-primary flex items-center gap-3 px-6 py-4 text-sm flex-1 justify-center"
           >
             {isPaused
               ? <><Play className="w-5 h-5 fill-current" /> RESUME</>
@@ -258,14 +258,14 @@ export default function TimerView({
           <button
             onClick={handleAbort}
             className="flex items-center justify-center gap-3 px-6 py-4 border-4 border-[#ef4444] text-[#ef4444]
-                       bg-black hover:bg-[#ef4444] hover:text-black transition-none font-bold text-[10px] uppercase shadow-[4px_4px_0px_#ef4444]"
+                       bg-black hover:bg-[#ef4444] hover:text-black transition-none font-bold text-sm uppercase shadow-[4px_4px_0px_#ef4444]"
           >
             <XCircle className="w-5 h-5" />
             ABORT
           </button>
         </div>
 
-        <p className="text-[#93c5fd] text-[7px] text-center uppercase mt-4">
+        <p className="text-white/50 text-xs text-center uppercase font-bold mt-4">
           STAY FOCUSED. EVERY MINUTE IS PROOF OF WORK.
         </p>
       </div>
@@ -285,7 +285,7 @@ export default function TimerView({
 
           <button 
             onClick={handlePopOut}
-            className="absolute top-6 right-6 text-white/50 hover:text-[#93c5fd] flex items-center gap-2 text-[10px] uppercase transition-colors z-20"
+            className="absolute top-6 right-6 text-white/50 hover:text-[#93c5fd] flex items-center gap-2 text-sm uppercase transition-colors z-20"
             title="Pop out timer"
           >
             <ExternalLink className="w-4 h-4" /> POP OUT
@@ -305,10 +305,10 @@ export default function TimerView({
           
           <div className="text-center space-y-6 pixel-card p-8">
             <h2 className="text-white text-[12px] font-bold uppercase text-shadow">Timer Popped Out</h2>
-            <p className="text-[#93c5fd] text-[9px] uppercase">Your session is running in a mini-window.</p>
+            <p className="text-white/60 text-sm uppercase font-bold">Your session is running in a mini-window.</p>
             <button 
               onClick={handlePullBack}
-              className="btn-primary px-6 py-4 text-[10px]"
+              className="btn-primary px-6 py-4 text-sm"
             >
               BRING BACK HERE
             </button>

@@ -70,7 +70,7 @@ export default function App() {
   if (user === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white/30 text-sm animate-pulse">Loading…</div>
+        <div className="text-black/40 text-sm animate-pulse font-bold">Loading…</div>
       </div>
     );
   }
@@ -87,13 +87,14 @@ export default function App() {
         position="top-center"
         toastOptions={{
           style: {
-            background: '#111',
-            color: '#fff',
-            border: '4px solid #000',
-            borderRadius: '0',
-            fontSize: '10px',
-            fontFamily: '"Press Start 2P", monospace',
-            boxShadow: '4px 4px 0px rgba(0,0,0,0.5)',
+            background: '#fff',
+            color: '#000',
+            border: '3px solid #000',
+            borderRadius: '12px',
+            fontSize: '14px',
+            fontFamily: '"Space Grotesk", sans-serif',
+            boxShadow: '4px 4px 0px #000',
+            fontWeight: 'bold',
           },
         }}
       />
@@ -149,7 +150,7 @@ export default function App() {
       {/* Bottom Tab Bar — hidden during active timer */}
       {!isTimerActive && (
         <nav className="fixed bottom-0 inset-x-0 z-30 flex items-center justify-around
-                        bg-[#020617] border-t-4 border-black px-2
+                        bg-white border-t-[3px] border-black px-2
                         pb-safe" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 6px)' }}>
           {TABS.map(({ id, label, icon: Icon }) => {
             const active = tab === id;
@@ -158,15 +159,12 @@ export default function App() {
                 key={id}
                 onClick={() => { playSfx(); setTab(id); }}
                 className={`flex flex-col items-center gap-1 py-1.5 px-4 transition-none
-                  ${active ? 'text-[#ef4444]' : 'text-white/40 hover:text-white/70'}`}
+                  ${active ? 'text-black' : 'text-black/40 hover:text-black/70'}`}
               >
-                <div className={`relative p-1.5 transition-none border-4 ${active ? 'bg-[#2a2a35] border-black' : 'border-transparent'}`}>
+                <div className={`relative p-1.5 transition-none rounded-lg border-[3px] ${active ? 'bg-[#f9a8d4] border-black shadow-[2px_2px_0px_#000]' : 'border-transparent'}`}>
                   <Icon className="w-5 h-5" />
-                  {active && (
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#ef4444] border-2 border-black" />
-                  )}
                 </div>
-                <span className="text-[7px] uppercase">{label}</span>
+                <span className="text-[10px] uppercase font-bold">{label}</span>
               </button>
             );
           })}

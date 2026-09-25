@@ -1,10 +1,9 @@
 // src/habits/HabitCard.jsx
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Check, X, AlertTriangle } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 
 export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
   const isDone        = data?.done || false;
-  const isRelapse     = habit.isRelapse || false;
   const [showDetails, setShowDetails] = useState(false);
   const [tagInput,    setTagInput]    = useState('');
   const [draftText,   setDraftText]   = useState('');
@@ -54,25 +53,17 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
 
   const handleRemoveTag = (i) => handleDetailChange(tags.filter((_, idx) => idx !== i).join('||'));
 
-  // Relapse-specific styles
-  const cardBg = isRelapse
-    ? isDone
-      ? 'bg-red-500/10 border-red-500/30'                           // Relapsed — danger glow
-      : 'bg-white/[0.02] border-white/6 hover:border-white/10 hover:bg-white/[0.04]' // Clean
-    : isDone
-      ? 'bg-white/6 border-white/12'
-      : 'bg-white/[0.02] border-white/6 hover:border-white/10 hover:bg-white/[0.04]';
+  // Normal styling
+  const cardBg = isDone
+      ? 'bg-[#a7f3d0] border-black'
+      : 'bg-white border-black hover:bg-gray-50';
 
-  const checkboxStyle = isRelapse
-    ? isDone
-      ? 'bg-red-600 border-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]'
-      : 'border-white/20'
-    : isDone
-      ? 'bg-brand-500 border-brand-500 shadow-[0_0_10px_rgba(99,102,241,0.4)]'
-      : 'border-white/20';
+  const checkboxStyle = isDone
+      ? 'bg-[#10b981] border-black shadow-[2px_2px_0px_#000]'
+      : 'bg-white border-black shadow-[2px_2px_0px_#000]';
 
   return (
-    <div className={`rounded-xl border transition-all duration-200 ${cardBg}`}>
+    <div className={`rounded-lg border-[3px] transition-all duration-200 ${cardBg}`}>
 
       {/* Main row */}
       <div
@@ -80,33 +71,24 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
         onClick={handleCheck}
       >
         {/* Checkbox */}
-        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150
+        <div className={`w-6 h-6 rounded-md border-[3px] flex items-center justify-center flex-shrink-0 transition-all duration-150
           ${checkboxStyle}`}>
-          {isDone && (isRelapse
-            ? <AlertTriangle className="w-3 h-3 text-white" strokeWidth={3} />
-            : <Check className="w-3 h-3 text-white" strokeWidth={3} />
-          )}
+          {isDone && <Check className="w-4 h-4 text-white font-bold" strokeWidth={4} />}
         </div>
 
-        <span className="text-lg leading-none select-none">{habit.emoji}</span>
+        <span className="text-xl leading-none select-none">{habit.emoji}</span>
 
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-medium transition-all duration-150
-            ${isRelapse
-              ? isDone ? 'text-red-400' : 'text-white/85'
-              : isDone ? 'text-white/50 line-through' : 'text-white/85'}`}>
+          <p className={`text-base font-bold transition-all duration-150
+            ${isDone ? 'text-black/60 line-through' : 'text-black'}`}>
             {habit.name}
           </p>
-          {timestamp && <p className="text-xs text-white/30 mt-0.5">{timestamp}</p>}
+          {timestamp && <p className="text-xs text-black/50 mt-0.5 font-bold uppercase">{timestamp}</p>}
         </div>
 
-        {/* Relapse badge or detail content indicator */}
-        {isRelapse && isDone ? (
-          <span className="text-[8px] px-2 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 flex-shrink-0 uppercase font-bold">
-            Relapsed
-          </span>
-        ) : habit.hasDetails && hasContent && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-brand-500/15 border border-brand-500/25 text-brand-300 flex-shrink-0">
+        {/* Detail content indicator */}
+        {habit.hasDetails && hasContent && (
+          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-white border-[2px] border-black text-black flex-shrink-0 shadow-[2px_2px_0px_#000]">
             {isTagsType ? `${tags.length}` : '📝'}
           </span>
         )}
@@ -114,24 +96,24 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
 
       {/* Expandable detail section */}
       {habit.hasDetails && showDetails && (
-        <div className={`px-4 pb-3 pt-3 ${isRelapse && isDone ? 'border-t border-red-500/20' : 'border-t border-white/5'}`}>
-          <label className={`text-xs mb-2 block font-medium ${isRelapse ? 'text-red-400/70' : 'text-white/40'}`}>
+        <div className="px-4 pb-4 pt-3 border-t-[3px] border-black bg-gray-50">
+          <label className="text-xs mb-2 block font-bold uppercase text-black/70">
             {habit.detailField.label}
           </label>
 
           {isTagsType ? (
             <div onClick={e => e.stopPropagation()}>
               {tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mb-2">
+                <div className="flex flex-wrap gap-2 mb-3">
                   {tags.map((tag, i) => (
-                    <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
-                                             bg-brand-500/15 border border-brand-500/25 text-brand-300 text-xs">
+                    <span key={i} className="inline-flex font-bold items-center gap-1 px-3 py-1 rounded-full
+                                             bg-white border-[2px] border-black text-black text-xs shadow-[2px_2px_0px_#000]">
                       {tag}
                       <button
                         onClick={e => { e.stopPropagation(); handleRemoveTag(i); }}
-                        className="text-brand-400/60 hover:text-brand-300 transition-colors ml-0.5"
+                        className="text-black/60 hover:text-black transition-colors ml-1"
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-3 h-3" strokeWidth={3} />
                       </button>
                     </span>
                   ))}
@@ -150,7 +132,7 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
                 <button
                   onClick={handleAddTag}
                   disabled={!tagInput.trim()}
-                  className="btn-primary px-3 py-2 text-sm disabled:opacity-30"
+                  className="btn-primary px-4 py-2 text-sm disabled:opacity-30 shadow-[2px_2px_0px_#000]"
                 >
                   Add
                 </button>
@@ -166,21 +148,21 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
               onClick={e => e.stopPropagation()}
             />
           ) : detailValue ? (
-            <div className={`flex items-start justify-between gap-3 p-3 rounded-lg border ${isRelapse ? 'bg-red-500/5 border-red-500/20' : 'bg-white/[0.02] border-white/10'}`}>
-              <p className={`text-sm whitespace-pre-wrap flex-1 ${isRelapse ? 'text-red-200' : 'text-white/80'}`}>{detailValue}</p>
+            <div className="flex items-start justify-between gap-3 p-3 rounded-lg border-[3px] border-black bg-white shadow-[2px_2px_0px_#000]">
+              <p className="text-sm font-bold whitespace-pre-wrap flex-1 text-black">{detailValue}</p>
               <button
                 onClick={(e) => { e.stopPropagation(); handleDetailChange(''); }}
-                className="text-white/40 hover:text-red-400 transition-colors p-1"
+                className="text-black/40 hover:text-red-500 transition-colors p-1"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" strokeWidth={3} />
               </button>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               {habit.detailField.multiline ? (
                 <textarea
                   ref={inputRef}
-                  className={`input-base text-sm resize-none ${isRelapse ? 'border-red-500/30 focus:border-red-500' : ''}`}
+                  className="input-base text-sm resize-none"
                   placeholder={habit.detailField.placeholder}
                   value={draftText}
                   onChange={e => setDraftText(e.target.value)}
@@ -202,7 +184,7 @@ export default function HabitCard({ habit, data, onToggle, onUpdateDetails }) {
               <button
                 onClick={(e) => { e.stopPropagation(); if (draftText.trim()) { handleDetailChange(draftText.trim()); setDraftText(''); } }}
                 disabled={!draftText.trim()}
-                className="btn-primary self-end px-4 py-1.5 text-xs disabled:opacity-30"
+                className="btn-primary self-end px-4 py-2 text-xs disabled:opacity-30 shadow-[2px_2px_0px_#000]"
               >
                 Submit
               </button>

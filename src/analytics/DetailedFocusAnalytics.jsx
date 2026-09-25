@@ -7,7 +7,7 @@ import { Clock, BookOpen, Filter, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 
 const CATEGORIES = [
-  { key: 'All',                 color: '#ef4444' },
+  { key: 'All',                 color: '#dc2626' },
   { key: 'Core Java & DSA',    color: '#3b82f6' },
   { key: 'MERN Backend',       color: '#22c55e' },
   { key: 'CS Fundamentals',    color: '#a855f7' },
@@ -75,13 +75,13 @@ export default function DetailedFocusAnalytics({ sessions, onBack }) {
       exit={{ opacity: 0, x: -30 }}
     >
       {/* Back button + header */}
-      <button onClick={onBack} className="btn-ghost text-[8px] px-3 py-2 mb-4">
+      <button onClick={onBack} className="btn-ghost text-xs px-3 py-2 mb-4">
         ← Back to Overview
       </button>
 
       <div className="pixel-card p-4 mb-5">
-        <h2 className="text-[11px] font-bold text-white uppercase text-shadow">Focus Session Log</h2>
-        <p className="text-[7px] text-[#93c5fd] uppercase mt-1">Topics covered • {filteredCount} sessions</p>
+        <h2 className="text-[11px] font-bold text-black uppercase ">Focus Session Log</h2>
+        <p className="text-xs text-black/50 uppercase mt-1">Topics covered • {filteredCount} sessions</p>
       </div>
 
       {/* Category totals */}
@@ -90,10 +90,10 @@ export default function DetailedFocusAnalytics({ sessions, onBack }) {
           const hours = categoryTotals[cat.key] || 0;
           return (
             <div key={cat.key} className="pixel-card p-3 flex items-center gap-2">
-              <div className="w-2.5 h-2.5 border-2 border-black flex-shrink-0" style={{ backgroundColor: cat.color, boxShadow: '2px 2px 0px rgba(0,0,0,0.5)' }} />
+              <div className="w-2.5 h-2.5 border-2 border-black flex-shrink-0" style={{ backgroundColor: cat.color, boxShadow: '2px 2px 0px #000' }} />
               <div className="flex-1 min-w-0">
-                <p className="text-[7px] text-white/60 uppercase truncate">{cat.key}</p>
-                <p className="text-[9px] font-bold tabular-nums" style={{ color: cat.color }}>{hours.toFixed(1)}h</p>
+                <p className="text-xs text-black/60 uppercase truncate">{cat.key}</p>
+                <p className="text-sm font-bold tabular-nums" style={{ color: cat.color }}>{hours.toFixed(1)}h</p>
               </div>
             </div>
           );
@@ -103,19 +103,19 @@ export default function DetailedFocusAnalytics({ sessions, onBack }) {
       {/* Filter bar */}
       <div className="mb-5">
         <div className="flex items-center gap-2 mb-2">
-          <Filter className="w-3 h-3 text-white/40" />
-          <span className="text-[7px] text-white/40 uppercase">Filter by category</span>
+          <Filter className="w-3 h-3 text-black/40" />
+          <span className="text-xs text-black/40 uppercase">Filter by category</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {CATEGORIES.map(cat => (
             <button
               key={cat.key}
               onClick={() => setFilter(cat.key)}
-              className={`text-[7px] uppercase px-3 py-2 border-2 border-black transition-none
+              className={`text-xs uppercase px-3 py-2 border-2 border-black transition-none
                 ${filter === cat.key
-                  ? 'text-white font-bold'
-                  : 'bg-[#333] text-white/60'}`}
-              style={filter === cat.key ? { backgroundColor: cat.color, boxShadow: '2px 2px 0px rgba(0,0,0,0.5)' } : { boxShadow: '2px 2px 0px rgba(0,0,0,0.3)' }}
+                  ? 'text-black font-bold'
+                  : 'bg-[#333] text-black/60'}`}
+              style={filter === cat.key ? { backgroundColor: cat.color, boxShadow: '2px 2px 0px #000' } : { boxShadow: '2px 2px 0px rgba(0,0,0,0.3)' }}
             >
               {cat.key}
             </button>
@@ -127,16 +127,16 @@ export default function DetailedFocusAnalytics({ sessions, onBack }) {
       {grouped.length === 0 ? (
         <div className="pixel-card p-8 text-center">
           <p className="text-3xl mb-2">👾</p>
-          <p className="text-[8px] text-white/40 uppercase">No sessions found</p>
+          <p className="text-xs text-black/40 uppercase">No sessions found</p>
         </div>
       ) : (
         <div className="space-y-4">
           {grouped.map(([dateKey, daySessions]) => (
             <div key={dateKey} className="pixel-card overflow-hidden">
               {/* Date header */}
-              <div className="px-4 py-2.5 bg-black/40 border-b-4 border-black flex items-center justify-between">
-                <span className="text-[8px] font-bold text-[#93c5fd] uppercase">{formatDateDisplay(dateKey)}</span>
-                <span className="text-[7px] text-white/40 uppercase">
+              <div className="px-4 py-2.5 bg-gray-100/40 border-b-4 border-black flex items-center justify-between">
+                <span className="text-xs font-bold text-black/50 uppercase">{formatDateDisplay(dateKey)}</span>
+                <span className="text-xs text-black/40 uppercase">
                   {daySessions.reduce((sum, s) => sum + (s.durationMinutes || 0), 0)} min total
                 </span>
               </div>
@@ -150,10 +150,10 @@ export default function DetailedFocusAnalytics({ sessions, onBack }) {
                       <div className="flex items-start gap-3">
                         {/* Time + duration */}
                         <div className="flex-shrink-0 text-right">
-                          <p className="text-[8px] text-white/30">{formatSessionTime(session.timestamp)}</p>
+                          <p className="text-xs text-black/30">{formatSessionTime(session.timestamp)}</p>
                           <div className="flex items-center gap-1 mt-1">
-                            <Clock className="w-3 h-3 text-white/30" />
-                            <span className="text-[8px] font-bold tabular-nums" style={{ color: catColor }}>
+                            <Clock className="w-3 h-3 text-black/30" />
+                            <span className="text-xs font-bold tabular-nums" style={{ color: catColor }}>
                               {session.durationMinutes}m
                             </span>
                           </div>
@@ -162,7 +162,7 @@ export default function DetailedFocusAnalytics({ sessions, onBack }) {
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                           {/* Category badge */}
-                          <span className="inline-flex items-center gap-1 text-[7px] uppercase px-2 py-1 border border-black/50 mb-1.5"
+                          <span className="inline-flex items-center gap-1 text-xs uppercase px-2 py-1 border border-black/50 mb-1.5"
                                 style={{ backgroundColor: catColor + '20', color: catColor }}>
                             <BookOpen className="w-2.5 h-2.5" />
                             {session.category}
@@ -170,14 +170,14 @@ export default function DetailedFocusAnalytics({ sessions, onBack }) {
 
                           {/* Goal */}
                           {session.intendedGoal && (
-                            <p className="text-[8px] text-white/40 mb-1">
-                              <span className="text-white/25">Goal: </span>{session.intendedGoal}
+                            <p className="text-xs text-black/40 mb-1">
+                              <span className="text-black/25">Goal: </span>{session.intendedGoal}
                             </p>
                           )}
 
                           {/* Outcome */}
                           {session.actualOutcome && (
-                            <p className="text-[9px] text-white/80 leading-relaxed">
+                            <p className="text-sm text-black/80 leading-relaxed">
                               {session.actualOutcome}
                             </p>
                           )}
@@ -188,7 +188,7 @@ export default function DetailedFocusAnalytics({ sessions, onBack }) {
                               href={session.proofUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 mt-1.5 text-[7px] uppercase text-brand-400 hover:text-brand-300"
+                              className="inline-flex items-center gap-1 mt-1.5 text-xs uppercase text-brand-400 hover:text-brand-300"
                             >
                               <ExternalLink className="w-3 h-3" />
                               View Proof

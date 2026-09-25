@@ -12,7 +12,7 @@ export default function DayScore({ score, total = 15, size = 96 }) {
     percentage >= 80 ? '#22c55e' :
     percentage >= 60 ? '#a855f7' :
     percentage >= 40 ? '#f59e0b' :
-    percentage > 0   ? '#ef4444' : '#2a2a3a';
+    percentage > 0   ? '#ef4444' : '#e5e7eb';
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -20,7 +20,7 @@ export default function DayScore({ score, total = 15, size = 96 }) {
         {/* Track */}
         <circle
           cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeW}
+          fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth={strokeW}
         />
         {/* Progress */}
         <circle
@@ -38,11 +38,11 @@ export default function DayScore({ score, total = 15, size = 96 }) {
       </svg>
       {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-black text-white leading-none tabular-nums"
+        <span className="font-black text-black leading-none tabular-nums"
               style={{ fontSize: size * 0.26 }}>
           {score}
         </span>
-        <span className="text-white/30 font-medium leading-none"
+        <span className="text-black/40 font-medium leading-none"
               style={{ fontSize: size * 0.12 }}>
           of {total}
         </span>

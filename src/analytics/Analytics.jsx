@@ -7,10 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import { differenceInDays, format, subDays } from 'date-fns';
-import { getLastNDays, calculateStreak, calculatePercentage, calculateCleanStreak } from '../lib/habitUtils';
+import { getLastNDays, calculateStreak, calculatePercentage } from '../lib/habitUtils';
 import { getDaysInRange } from '../lib/habitFirestore';
-import { HABITS, getRelapseHabits } from '../lib/habits';
-import { ChevronRight, Shield, Zap, CheckSquare, Target, BarChart2, TrendingUp, RefreshCw } from 'lucide-react';
+import { HABITS } from '../lib/habits';
+import { ChevronRight, Zap, CheckSquare, Target, BarChart2, TrendingUp, RefreshCw } from 'lucide-react';
 
 import StatCard         from './StatCard';
 import GoalChart        from './GoalChart';
@@ -70,10 +70,10 @@ function SectionTab({ section, active, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-3 py-2 border-4 text-[8px] uppercase font-bold transition-none
+      className={`flex items-center gap-2 px-3 py-2 border-[3px] text-sm uppercase font-bold transition-none
         ${active
-          ? 'bg-[#ef4444] border-black text-white shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
-          : 'bg-[#222] border-black/50 text-white/50 hover:text-white/70'}`}
+          ? 'bg-[#dc2626] border-black text-white shadow-[4px_4px_0px_#000] rounded-xl'
+          : 'bg-white border-black text-black/60 hover:text-black rounded-xl shadow-[2px_2px_0px_#000]'}`}
     >
       <Icon className="w-3.5 h-3.5" />
       {section.label}
@@ -145,22 +145,15 @@ export default function Analytics({ user }) {
     ? Math.round(totalMinutes / sessions.length)
     : 0;
 
-  // Relapse clean streaks
-  const relapseHabits = getRelapseHabits();
-  const cleanStreaks   = relapseHabits.map(h => ({
-    habit: h,
-    ...calculateCleanStreak(habitDays, h.id),
-  }));
-
   if (loading) return <LoadingState />;
 
   if (error) return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="pixel-card p-8 text-center max-w-sm">
         <p className="text-4xl mb-3">⚠️</p>
-        <p className="text-white/60 text-[10px] uppercase">Failed to load analytics</p>
-        <p className="text-[#ef4444] text-[8px] mt-2 uppercase">{error}</p>
-        <button onClick={load} className="btn-ghost mt-6 text-[10px] px-4 py-3">Try again</button>
+        <p className="text-black/60 text-sm uppercase">Failed to load analytics</p>
+        <p className="text-[#ef4444] text-sm mt-2 uppercase">{error}</p>
+        <button onClick={load} className="btn-ghost mt-6 text-sm px-4 py-3">Try again</button>
       </div>
     </div>
   );
@@ -176,8 +169,8 @@ export default function Analytics({ user }) {
       {/* Header */}
       <header className="mb-5 pixel-card p-4 flex items-center justify-between">
         <div>
-          <h1 className="text-[12px] font-bold text-white text-shadow uppercase">Analytics HQ</h1>
-          <p className="text-[#93c5fd] text-[7px] mt-1 uppercase">Live Progress Dashboard</p>
+          <h1 className="text-xl font-bold text-black  uppercase">Analytics HQ</h1>
+          <p className="text-black/60 text-xs mt-1 uppercase">Live Progress Dashboard</p>
         </div>
         <button onClick={load} className="btn-ghost p-2" title="Refresh">
           <RefreshCw className="w-4 h-4" />
@@ -236,18 +229,18 @@ export default function Analytics({ user }) {
 
                 {/* Today + This Week highlight */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-black border-4 border-[#22c55e] p-4 flex flex-col" style={{ boxShadow: '4px 4px 0px #166534' }}>
-                    <p className="text-white/50 text-[7px] uppercase font-bold mb-2">Today</p>
+                  <div className="bg-white border-[3px] border-black p-4 flex flex-col" style={{ boxShadow: '4px 4px 0px #000' }}>
+                    <p className="text-black/50 text-xs uppercase font-bold mb-2">Today</p>
                     <div className="flex items-end gap-2 mt-auto">
-                      <span className="text-[16px] font-bold text-[#22c55e] text-shadow">{todayHours.toFixed(1)}</span>
-                      <span className="text-white/40 text-[7px] uppercase mb-1">hrs • {todaySessions.length} sessions</span>
+                      <span className="text-2xl font-bold text-[#22c55e] ">{todayHours.toFixed(1)}</span>
+                      <span className="text-black/40 text-xs uppercase mb-1">hrs • {todaySessions.length} sessions</span>
                     </div>
                   </div>
-                  <div className="bg-black border-4 border-[#3b82f6] p-4 flex flex-col" style={{ boxShadow: '4px 4px 0px #1e3a5f' }}>
-                    <p className="text-white/50 text-[7px] uppercase font-bold mb-2">This Week</p>
+                  <div className="bg-white border-[3px] border-black p-4 flex flex-col" style={{ boxShadow: '4px 4px 0px #000' }}>
+                    <p className="text-black/50 text-xs uppercase font-bold mb-2">This Week</p>
                     <div className="flex items-end gap-2 mt-auto">
-                      <span className="text-[16px] font-bold text-[#93c5fd] text-shadow">{thisWeekHours.toFixed(1)}</span>
-                      <span className="text-white/40 text-[7px] uppercase mb-1">hrs • {thisWeekSessions.length} sessions</span>
+                      <span className="text-2xl font-bold text-black/60 ">{thisWeekHours.toFixed(1)}</span>
+                      <span className="text-black/40 text-xs uppercase mb-1">hrs • {thisWeekSessions.length} sessions</span>
                     </div>
                   </div>
                 </div>
@@ -276,43 +269,6 @@ export default function Analytics({ user }) {
                   <GoalChart sessions={sessions} />
                 </Card>
 
-                {/* Clean Streak Cards (Relapse Accountability) */}
-                {cleanStreaks.length > 0 && (
-                  <>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Shield className="w-4 h-4 text-white/40" />
-                      <span className="text-[9px] text-white/60 uppercase font-bold">Accountability</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {cleanStreaks.map(cs => (
-                        <div key={cs.habit.id}
-                             className="bg-black border-4 p-4 flex flex-col"
-                             style={{
-                               borderColor: cs.current > 7 ? '#22c55e' : '#991b1b',
-                               boxShadow: `4px 4px 0px ${cs.current > 7 ? '#166534' : '#7f1d1d'}`,
-                             }}>
-                          <div className="flex items-center gap-2 mb-3">
-                            <Shield className={`w-4 h-4 ${cs.current > 7 ? 'text-emerald-400' : 'text-red-400'}`} />
-                            <p className="text-white/50 text-[7px] uppercase leading-tight font-bold">
-                              {cs.habit.name}
-                            </p>
-                          </div>
-                          <div className="flex items-end gap-2 mt-auto">
-                            <span className={`text-[16px] font-bold text-shadow ${cs.current > 7 ? 'text-emerald-400' : cs.current > 0 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {cs.current}
-                            </span>
-                            <span className="text-white/40 text-[7px] uppercase mb-1">days clean</span>
-                          </div>
-                          <div className="flex items-center gap-3 mt-2 text-[6px] text-white/30 uppercase">
-                            <span>Best: {cs.longest}d</span>
-                            <span className="text-red-400/60">{cs.totalRelapses} relapses</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-
                 {/* Drill-down navigation */}
                 <div className="space-y-2 mt-3">
                   <button
@@ -322,10 +278,10 @@ export default function Analytics({ user }) {
                   >
                     <span className="text-lg">📊</span>
                     <div className="flex-1 text-left">
-                      <p className="text-[9px] font-bold text-white uppercase text-shadow">Detailed Habit Insights</p>
-                      <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Per-habit breakdown, streaks & relapse analysis</p>
+                      <p className="text-base font-bold text-black uppercase ">Detailed Habit Insights</p>
+                      <p className="text-xs text-black/60 uppercase mt-0.5">Per-habit breakdown, streaks & relapse analysis</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                    <ChevronRight className="w-4 h-4 text-black/40 group-hover:text-black" />
                   </button>
 
                   <button
@@ -335,10 +291,10 @@ export default function Analytics({ user }) {
                   >
                     <span className="text-lg">⏱️</span>
                     <div className="flex-1 text-left">
-                      <p className="text-[9px] font-bold text-white uppercase text-shadow">Focus Session Log</p>
-                      <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Topics covered, session history by date</p>
+                      <p className="text-base font-bold text-black uppercase ">Focus Session Log</p>
+                      <p className="text-xs text-black/60 uppercase mt-0.5">Topics covered, session history by date</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                    <ChevronRight className="w-4 h-4 text-black/40 group-hover:text-black" />
                   </button>
                 </div>
               </motion.div>
@@ -394,10 +350,10 @@ export default function Analytics({ user }) {
                 >
                   <span className="text-lg">📝</span>
                   <div className="flex-1 text-left">
-                    <p className="text-[9px] font-bold text-white uppercase text-shadow">Full Session Log</p>
-                    <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Browse all sessions by date & category</p>
+                    <p className="text-base font-bold text-black uppercase ">Full Session Log</p>
+                    <p className="text-xs text-black/60 uppercase mt-0.5">Browse all sessions by date & category</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                  <ChevronRight className="w-4 h-4 text-black/40 group-hover:text-black" />
                 </button>
               </motion.div>
             )}
@@ -435,41 +391,6 @@ export default function Analytics({ user }) {
                   <HeatmapGrid habitDays={habitDays} />
                 </Card>
 
-                {/* Clean Streak Cards */}
-                {cleanStreaks.length > 0 && (
-                  <>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Shield className="w-4 h-4 text-red-400" />
-                      <span className="text-[9px] text-red-400 uppercase font-bold">Accountability Streaks</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {cleanStreaks.map(cs => (
-                        <div key={cs.habit.id}
-                             className="bg-black border-4 p-4 flex flex-col"
-                             style={{
-                               borderColor: cs.current > 7 ? '#22c55e' : '#991b1b',
-                               boxShadow: `4px 4px 0px ${cs.current > 7 ? '#166534' : '#7f1d1d'}`,
-                             }}>
-                          <div className="flex items-center gap-2 mb-3">
-                            <Shield className={`w-4 h-4 ${cs.current > 7 ? 'text-emerald-400' : 'text-red-400'}`} />
-                            <p className="text-white/50 text-[7px] uppercase leading-tight font-bold">{cs.habit.name}</p>
-                          </div>
-                          <div className="flex items-end gap-2 mt-auto">
-                            <span className={`text-[16px] font-bold text-shadow ${cs.current > 7 ? 'text-emerald-400' : cs.current > 0 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {cs.current}
-                            </span>
-                            <span className="text-white/40 text-[7px] uppercase mb-1">days clean</span>
-                          </div>
-                          <div className="flex items-center gap-3 mt-2 text-[6px] text-white/30 uppercase">
-                            <span>Best: {cs.longest}d</span>
-                            <span className="text-red-400/60">{cs.totalRelapses} relapses</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-
                 {/* Drill-down to detailed habits */}
                 <button
                   onClick={() => setDetailView('habits')}
@@ -478,10 +399,10 @@ export default function Analytics({ user }) {
                 >
                   <span className="text-lg">🔍</span>
                   <div className="flex-1 text-left">
-                    <p className="text-[9px] font-bold text-white uppercase text-shadow">Per-Habit Breakdown</p>
-                    <p className="text-[7px] text-[#93c5fd] uppercase mt-0.5">Individual habit stats, mini heatmaps & triggers</p>
+                    <p className="text-base font-bold text-black uppercase ">Per-Habit Breakdown</p>
+                    <p className="text-xs text-black/60 uppercase mt-0.5">Individual habit stats, mini heatmaps & triggers</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                  <ChevronRight className="w-4 h-4 text-black/40 group-hover:text-black" />
                 </button>
               </motion.div>
             )}
@@ -525,8 +446,8 @@ export default function Analytics({ user }) {
                   <div className="flex items-center gap-2 mb-4">
                     <TrendingUp className="w-4 h-4 text-[#22c55e]" />
                     <div>
-                      <h3 className="text-[10px] font-bold text-white uppercase text-shadow">Goal Summary</h3>
-                      <p className="text-[7px] text-[#93c5fd] uppercase mt-1">How you're tracking</p>
+                      <h3 className="text-sm font-bold text-black uppercase ">Goal Summary</h3>
+                      <p className="text-xs text-black/60 uppercase mt-1">How you're tracking</p>
                     </div>
                   </div>
 
@@ -534,10 +455,10 @@ export default function Analytics({ user }) {
                     {/* Focus hours goal */}
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-[8px] text-white/80 uppercase">800 Hours Focus</span>
-                        <span className="text-[9px] font-bold text-[#ef4444]">{totalHours.toFixed(1)}h / 800h</span>
+                        <span className="text-sm text-black/80 uppercase">800 Hours Focus</span>
+                        <span className="text-base font-bold text-[#ef4444]">{totalHours.toFixed(1)}h / 800h</span>
                       </div>
-                      <div className="h-4 bg-black border-4 border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+                      <div className="h-4 bg-white border-[3px] border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
                         <div className="h-full bg-[#ef4444] transition-all duration-500"
                              style={{ width: `${Math.min(100, (totalHours / GOAL) * 100)}%` }} />
                       </div>
@@ -546,10 +467,10 @@ export default function Analytics({ user }) {
                     {/* Habit consistency goal */}
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-[8px] text-white/80 uppercase">Habit Consistency</span>
-                        <span className="text-[9px] font-bold text-[#22c55e]">{avgHabitPct}% avg</span>
+                        <span className="text-sm text-black/80 uppercase">Habit Consistency</span>
+                        <span className="text-base font-bold text-[#22c55e]">{avgHabitPct}% avg</span>
                       </div>
-                      <div className="h-4 bg-black border-4 border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+                      <div className="h-4 bg-white border-[3px] border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
                         <div className="h-full bg-[#22c55e] transition-all duration-500"
                              style={{ width: `${avgHabitPct}%` }} />
                       </div>
@@ -558,14 +479,14 @@ export default function Analytics({ user }) {
                     {/* Streak goal */}
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-[8px] text-white/80 uppercase">Current Streak</span>
-                        <span className="text-[9px] font-bold text-[#f59e0b]">{streaks.current} days</span>
+                        <span className="text-sm text-black/80 uppercase">Current Streak</span>
+                        <span className="text-base font-bold text-[#f59e0b]">{streaks.current} days</span>
                       </div>
-                      <div className="h-4 bg-black border-4 border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+                      <div className="h-4 bg-white border-[3px] border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
                         <div className="h-full bg-[#f59e0b] transition-all duration-500"
                              style={{ width: `${Math.min(100, (streaks.current / 30) * 100)}%` }} />
                       </div>
-                      <p className="text-[6px] text-white/30 uppercase mt-1">Target: 30-day streak</p>
+                      <p className="text-xs text-black/30 uppercase mt-1">Target: 30-day streak</p>
                     </div>
                   </div>
                 </Card>

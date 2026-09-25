@@ -3,10 +3,9 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, AlertTriangle, Shield } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { format, parseISO, subDays } from 'date-fns';
 import { HABITS, HABIT_CATEGORIES, getHabitsByCategory } from '../lib/habits';
-import { calculateCleanStreak } from '../lib/habitUtils';
 
 // Build per-habit stats from last N days of data
 function buildHabitStats(habitDays, habit, days = 30) {
@@ -100,7 +99,7 @@ function MiniHeatmap({ data, isRelapse }) {
               ? 'rgba(255,255,255,0.04)'
               : d.isGood
                 ? (isRelapse ? '#22c55e' : '#22c55e')
-                : (isRelapse ? '#ef4444' : 'rgba(255,255,255,0.06)'),
+                : (isRelapse ? '#dc2626' : 'rgba(0,0,0,0.06)'),
           }}
         />
       ))}
@@ -112,20 +111,20 @@ function HabitInsightCard({ habit, stats, heatmapData }) {
   const isRelapse = habit.isRelapse || false;
 
   return (
-    <div className={`px-4 py-3 border-b last:border-b-0 ${isRelapse ? 'border-red-500/10' : 'border-white/5'}`}>
+    <div className={`px-4 py-3 border-b-2 border-black/10 last:border-b-0 hover:bg-blue-50/50 transition-colors ${isRelapse ? 'bg-red-50/30' : ''}`}>
       <div className="flex items-center gap-3 mb-2">
         <span className="text-base leading-none">{habit.emoji}</span>
-        <p className="text-[9px] font-bold text-white/85 uppercase flex-1">{habit.name}</p>
-        <span className={`text-[10px] font-bold tabular-nums
+        <p className="text-sm font-bold text-black/85 uppercase flex-1">{habit.name}</p>
+        <span className={`text-sm font-bold tabular-nums
           ${stats.completionRate >= 80 ? 'text-[#22c55e]'
           : stats.completionRate >= 50 ? 'text-[#f59e0b]'
-          : 'text-[#ef4444]'}`}>
+          : 'text-[#dc2626]'}`}>
           {stats.completionRate}%
         </span>
       </div>
 
       {/* Stats row */}
-      <div className="flex items-center gap-4 mb-2 text-[7px] text-white/50 uppercase">
+      <div className="flex items-center gap-4 mb-2 text-xs text-black/50 uppercase">
         <span>🔥 {stats.streak}d streak</span>
         <span>🏆 Best: {stats.bestStreak}d</span>
         <span>✅ {stats.daysCompleted}/{stats.daysCompleted + stats.daysMissed}</span>
@@ -133,7 +132,7 @@ function HabitInsightCard({ habit, stats, heatmapData }) {
 
       {/* Mini heatmap */}
       <div className="flex items-center gap-2">
-        <span className="text-[6px] text-white/30 uppercase">14d:</span>
+        <span className="text-xs text-black/30 uppercase">14d:</span>
         <MiniHeatmap data={heatmapData} isRelapse={isRelapse} />
       </div>
     </div>
@@ -148,20 +147,20 @@ function RelapseInsightCard({ habit, stats, heatmapData, triggers }) {
       <div className="px-4 py-3">
         <div className="flex items-center gap-3 mb-2">
           <span className="text-base leading-none">{habit.emoji}</span>
-          <p className="text-[9px] font-bold text-red-300 uppercase flex-1">{habit.name}</p>
+          <p className="text-sm font-bold text-red-300 uppercase flex-1">{habit.name}</p>
           {stats.streak > 0 ? (
-            <span className="text-[8px] font-bold text-emerald-400 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/25 uppercase">
+            <span className="text-xs font-bold text-emerald-400 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/25 uppercase">
               {stats.streak}d clean
             </span>
           ) : (
-            <span className="text-[8px] font-bold text-red-400 px-2 py-0.5 bg-red-500/10 border border-red-500/25 uppercase">
+            <span className="text-xs font-bold text-red-400 px-2 py-0.5 bg-red-500/10 border border-red-500/25 uppercase">
               Relapsed today
             </span>
           )}
         </div>
 
         {/* Stats row */}
-        <div className="flex items-center gap-4 mb-2 text-[7px] text-white/50 uppercase">
+        <div className="flex items-center gap-4 mb-2 text-xs text-black/50 uppercase">
           <span><Shield className="w-3 h-3 inline mr-1 text-emerald-400" />Best: {stats.bestStreak}d clean</span>
           <span className="text-red-400">⚠ {stats.daysMissed} relapses</span>
           <span>Clean rate: {stats.completionRate}%</span>
@@ -169,7 +168,7 @@ function RelapseInsightCard({ habit, stats, heatmapData, triggers }) {
 
         {/* Mini heatmap */}
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[6px] text-white/30 uppercase">14d:</span>
+          <span className="text-xs text-black/30 uppercase">14d:</span>
           <MiniHeatmap data={heatmapData} isRelapse={true} />
         </div>
 
@@ -177,7 +176,7 @@ function RelapseInsightCard({ habit, stats, heatmapData, triggers }) {
         {triggers.length > 0 && (
           <button
             onClick={() => setShowTriggers(!showTriggers)}
-            className="flex items-center gap-1 text-[7px] text-red-400/60 hover:text-red-400 uppercase mt-1"
+            className="flex items-center gap-1 text-xs text-red-400/60 hover:text-red-400 uppercase mt-1"
           >
             {showTriggers ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             {triggers.length} trigger{triggers.length > 1 ? 's' : ''} logged
@@ -197,8 +196,8 @@ function RelapseInsightCard({ habit, stats, heatmapData, triggers }) {
             <div className="px-4 pb-3 space-y-1.5">
               {triggers.map((t, i) => (
                 <div key={i} className="flex gap-2 items-start px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-lg">
-                  <span className="text-[7px] text-red-400/50 uppercase flex-shrink-0 mt-0.5">{t.dateDisplay}</span>
-                  <p className="text-[8px] text-white/60 leading-relaxed">{t.trigger}</p>
+                  <span className="text-xs text-red-400/50 uppercase flex-shrink-0 mt-0.5">{t.dateDisplay}</span>
+                  <p className="text-xs text-black/60 leading-relaxed">{t.trigger}</p>
                 </div>
               ))}
             </div>
@@ -218,9 +217,7 @@ export default function DetailedHabitAnalytics({ habitDays, onBack }) {
 
   const toggleCat = (id) => setExpandedCat(prev => ({ ...prev, [id]: !prev[id] }));
 
-  const normalCategories = HABIT_CATEGORIES.filter(c => c.id !== 'relapses');
-  const relapseCategory  = HABIT_CATEGORIES.find(c => c.id === 'relapses');
-  const relapseHabits    = getHabitsByCategory('relapses');
+  const normalCategories = HABIT_CATEGORIES;
 
   return (
     <motion.div
@@ -229,13 +226,15 @@ export default function DetailedHabitAnalytics({ habitDays, onBack }) {
       exit={{ opacity: 0, x: -30 }}
     >
       {/* Back button + header */}
-      <button onClick={onBack} className="btn-ghost text-[8px] px-3 py-2 mb-4">
+      <button onClick={onBack} className="btn-ghost text-xs px-3 py-2 mb-4">
         ← Back to Overview
       </button>
 
-      <div className="pixel-card p-4 mb-5">
-        <h2 className="text-[11px] font-bold text-white uppercase text-shadow">Detailed Habit Insights</h2>
-        <p className="text-[7px] text-[#93c5fd] uppercase mt-1">Per-habit breakdown — Last 30 tracked days</p>
+      <div className="pixel-card p-4 mb-5 bg-gradient-to-r from-red-500/10 to-blue-500/10 border-l-8 border-l-[#dc2626]">
+        <h2 className="text-xs font-bold text-black uppercase flex items-center gap-2">
+          <span className="text-[#dc2626]">🕷️</span> Detailed Habit Insights
+        </h2>
+        <p className="text-xs text-black/60 uppercase mt-1">Per-habit breakdown — Last 30 tracked days</p>
       </div>
 
       {/* Normal habit categories */}
@@ -247,17 +246,17 @@ export default function DetailedHabitAnalytics({ habitDays, onBack }) {
           <div key={category.id} className="pixel-card mb-4 overflow-hidden">
             <button
               onClick={() => toggleCat(category.id)}
-              className="w-full flex items-center gap-2 px-4 py-3 bg-black/30 border-b-4 border-black"
+              className="w-full flex items-center gap-2 px-4 py-3 bg-[#1d4ed8] text-white border-b-4 border-black hover:bg-[#1e40af] transition-colors"
             >
               <div className="w-3 h-3 border-2 border-black flex-shrink-0"
-                   style={{ backgroundColor: category.color, boxShadow: '2px 2px 0px rgba(0,0,0,0.5)' }} />
-              <span className="text-[9px] font-bold text-white uppercase text-shadow flex-1 text-left">
+                   style={{ backgroundColor: category.color, boxShadow: '2px 2px 0px #fff' }} />
+              <span className="text-sm font-bold uppercase flex-1 text-left tracking-wide">
                 {category.name}
               </span>
-              <span className="text-[7px] text-white/40 uppercase mr-2">
+              <span className="text-xs text-white/70 uppercase mr-2 font-bold">
                 {categoryHabits.length} habits
               </span>
-              {isExpanded ? <ChevronUp className="w-3 h-3 text-white/40" /> : <ChevronDown className="w-3 h-3 text-white/40" />}
+              {isExpanded ? <ChevronUp className="w-4 h-4 text-white/90" /> : <ChevronDown className="w-4 h-4 text-white/90" />}
             </button>
 
             <AnimatePresence>
@@ -283,49 +282,7 @@ export default function DetailedHabitAnalytics({ habitDays, onBack }) {
         );
       })}
 
-      {/* Relapse / Accountability section */}
-      {relapseCategory && relapseHabits.length > 0 && (
-        <div className="pixel-card mb-4 overflow-hidden"
-             style={{ borderColor: '#991b1b', boxShadow: 'inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.05), 4px 4px 0px #7f1d1d' }}>
-          <button
-            onClick={() => toggleCat('relapses')}
-            className="w-full flex items-center gap-2 px-4 py-3 bg-red-900/30 border-b-4 border-red-950"
-          >
-            <AlertTriangle className="w-4 h-4 text-red-400" />
-            <span className="text-[9px] font-bold text-red-400 uppercase text-shadow flex-1 text-left">
-              Accountability
-            </span>
-            {expandedCat['relapses']
-              ? <ChevronUp className="w-3 h-3 text-red-400/40" />
-              : <ChevronDown className="w-3 h-3 text-red-400/40" />}
-          </button>
 
-          <AnimatePresence>
-            {expandedCat['relapses'] && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                {relapseHabits.map(habit => {
-                  const cleanStreak = calculateCleanStreak(habitDays, habit.id);
-                  const stats = buildHabitStats(habitDays, habit);
-                  return (
-                    <RelapseInsightCard
-                      key={habit.id}
-                      habit={habit}
-                      stats={{ ...stats, daysMissed: cleanStreak.totalRelapses }}
-                      heatmapData={buildMiniHeatmap(habitDays, habit)}
-                      triggers={extractTriggers(habitDays, habit.id)}
-                    />
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
     </motion.div>
   );
 }

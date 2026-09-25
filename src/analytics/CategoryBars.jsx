@@ -15,8 +15,6 @@ function buildData(habitDays) {
       const done = catHabits.filter(h => {
         const data = day.habits?.[h.id];
         if (!data) return false;
-        // Relapse habits: NOT done = good (clean)
-        if (h.isRelapse) return !data.done;
         return data.done;
       }).length;
       return sum + (done / total) * 100;
@@ -26,8 +24,6 @@ function buildData(habitDays) {
       name: cat.name,
       icon: cat.icon,
       pct: Math.round(avgPct),
-      color: cat.color,
-      isRelapse: cat.id === 'relapses',
     };
   });
 }
@@ -39,29 +35,29 @@ export default function CategoryBars({ habitDays }) {
   return (
     <div>
       <div className="mb-6">
-        <h3 className="text-[10px] font-bold text-white uppercase text-shadow">Habit Category Averages</h3>
-        <p className="text-[7px] text-[#93c5fd] uppercase mt-1">Avg completion % (last 30 days)</p>
+        <h3 className="text-base font-bold text-black uppercase">Habit Category Averages</h3>
+        <p className="text-xs text-black/50 uppercase mt-1 font-bold">Avg completion % (last 30 days)</p>
       </div>
 
       {!hasData ? (
-        <div className="flex flex-col items-center justify-center h-[120px] text-white/40">
+        <div className="flex flex-col items-center justify-center h-[120px] text-black/40">
           <p className="text-3xl mb-2">👾</p>
-          <p className="text-[8px] uppercase">No habit data yet</p>
+          <p className="text-xs uppercase">No habit data yet</p>
         </div>
       ) : (
         <div className="space-y-6">
           {data.map(cat => (
             <div key={cat.name}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[8px] text-white/80 uppercase">
-                  {cat.isRelapse ? `${cat.name} (Clean Rate)` : cat.name}
+                <span className="text-[12px] text-black font-bold uppercase">
+                  {cat.name}
                 </span>
-                <span className="text-[10px] font-bold tabular-nums"
+                <span className="text-sm font-bold tabular-nums"
                       style={{ color: cat.color }}>
                   {cat.pct}%
                 </span>
               </div>
-              <div className="h-4 bg-black border-4 border-white p-0.5" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+              <div className="h-5 bg-gray-100 border-[3px] border-black rounded-full p-0.5" style={{ boxShadow: '2px 2px 0px #000' }}>
                 <div
                   className="h-full transition-none"
                   style={{

@@ -36,24 +36,24 @@ export default function AuthScreen() {
         <div className="mt-8"></div>
 
         {/* Logo */}
-        <div className="w-20 h-20 bg-[#111] mb-6 border-4 border-black p-0.5 shadow-[4px_4px_0px_rgba(0,0,0,0.5)]">
+        <div className="w-20 h-20 bg-white mb-6 border-[3px] border-black p-0.5 shadow-[4px_4px_0px_#000]">
           <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover" />
         </div>
 
-        <h1 className="text-[14px] text-white mb-2 text-shadow uppercase">Spidey Tracker</h1>
-        <p className="text-[#93c5fd] text-[8px] mb-6 uppercase">800 Hrs · Mission</p>
+        <h1 className="text-xl text-black mb-2  uppercase">Spidey Tracker</h1>
+        <p className="text-black/50 text-xs mb-6 uppercase">800 Hrs · Mission</p>
 
-        <p className="text-white text-[9px] mb-8 leading-relaxed px-4">
+        <p className="text-black text-sm mb-8 leading-relaxed px-4">
           Authenticate to access your mission logs.
         </p>
 
         <button
           onClick={handleGoogle}
           disabled={loading}
-          className="btn-ghost w-full flex items-center justify-center gap-3 py-4 text-[10px]"
+          className="btn-ghost w-full flex items-center justify-center gap-3 py-4 text-sm"
         >
           {loading ? (
-            <div className="text-[10px] animate-pulse">Loading...</div>
+            <div className="text-sm animate-pulse">Loading...</div>
           ) : (
             <>
               <GoogleIcon />
@@ -64,14 +64,14 @@ export default function AuthScreen() {
 
         {error && (
           <div
-            className="flex items-center gap-3 text-[#ef4444] text-[8px] bg-black border-4 border-[#ef4444] p-3 mt-4 w-full text-left"
+            className="flex items-center gap-3 text-[#dc2626] text-xs bg-red-50 border-[3px] border-[#dc2626] p-3 mt-4 w-full text-left"
           >
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             {error}
           </div>
         )}
 
-        <p className="text-[#666] text-[7px] mt-8 uppercase">
+        <p className="text-black/40 text-xs mt-8 uppercase">
           Private link established
         </p>
       </div>

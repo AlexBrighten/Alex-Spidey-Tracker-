@@ -114,18 +114,18 @@ export default function SpacedRepetition({ user }) {
           className="w-full flex items-center gap-3 px-4 py-3 bg-purple-900/30 border-b-4 border-purple-950/50"
         >
           <Brain className="w-4 h-4 text-purple-400" />
-          <span className="text-[9px] font-bold text-purple-300 uppercase text-shadow">
+          <span className="text-sm font-bold text-purple-300 uppercase ">
             {weekend ? '🧠 Weekend Review' : '🧩 Problems This Week'}
           </span>
           {!loading && totalCount > 0 && (
-            <span className={`ml-auto text-[7px] uppercase font-bold px-2 py-1 border
+            <span className={`ml-auto text-xs uppercase font-bold px-2 py-1 border
               ${allReviewed
                 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
                 : 'text-purple-300 bg-purple-500/10 border-purple-500/30'}`}>
               {reviewedCount}/{totalCount} reviewed
             </span>
           )}
-          {expanded ? <ChevronUp className="w-3 h-3 text-white/40" /> : <ChevronDown className="w-3 h-3 text-white/40" />}
+          {expanded ? <ChevronUp className="w-3 h-3 text-black/40" /> : <ChevronDown className="w-3 h-3 text-black/40" />}
         </button>
 
         <AnimatePresence>
@@ -143,7 +143,7 @@ export default function SpacedRepetition({ user }) {
                   </div>
                 ) : (
                   <>
-                    <p className="text-[7px] text-white/40 uppercase mb-3">
+                    <p className="text-xs text-black/40 uppercase mb-3">
                       {weekend
                         ? 'Review the problems you solved this week. Tap to mark as reviewed.'
                         : 'Problems you solved this week — review them on the weekend!'}
@@ -161,25 +161,25 @@ export default function SpacedRepetition({ user }) {
                               ${weekend ? 'cursor-pointer' : 'cursor-default'}
                               ${isReviewed
                                 ? 'bg-emerald-500/10 border-emerald-500/25'
-                                : 'bg-white/[0.02] border-white/8 hover:border-white/15'}`}
+                                : 'bg-white/[0.02] border-black/8 hover:border-black/15'}`}
                           >
                             {/* Review checkbox (weekend only) */}
                             {weekend && (
                               <div className={`w-4 h-4 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150
                                 ${isReviewed
                                   ? 'bg-emerald-500 border-emerald-500'
-                                  : 'border-white/20'}`}>
-                                {isReviewed && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
+                                  : 'border-black/20'}`}>
+                                {isReviewed && <Check className="w-2.5 h-2.5 text-black" strokeWidth={3} />}
                               </div>
                             )}
 
                             <div className="flex-1 min-w-0">
-                              <p className={`text-xs font-medium ${isReviewed ? 'text-white/50 line-through' : 'text-white/85'}`}>
+                              <p className={`text-xs font-medium ${isReviewed ? 'text-black/50 line-through' : 'text-black/85'}`}>
                                 🧩 {p.problem}
                               </p>
                             </div>
 
-                            <span className="text-[7px] text-white/30 uppercase flex-shrink-0">
+                            <span className="text-xs text-black/30 uppercase flex-shrink-0">
                               {p.dateDisplay}
                             </span>
                           </div>
@@ -189,8 +189,8 @@ export default function SpacedRepetition({ user }) {
 
                     {allReviewed && weekend && (
                       <div className="mt-3 flex items-center gap-2 px-3 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-                        <span className="text-[10px]">🎉</span>
-                        <p className="text-[7px] text-emerald-400 uppercase font-bold">All problems reviewed! Great job!</p>
+                        <span className="text-sm">🎉</span>
+                        <p className="text-xs text-emerald-400 uppercase font-bold">All problems reviewed! Great job!</p>
                       </div>
                     )}
                   </>

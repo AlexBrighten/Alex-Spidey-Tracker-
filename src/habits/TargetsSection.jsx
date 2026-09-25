@@ -30,14 +30,14 @@ export default function TargetsSection({
         <div className="pixel-card">
           <div className="pixel-header flex items-center justify-between p-3">
             <div className="flex items-center gap-3">
-              <span className="text-[14px]">🎯</span>
+              <span className="text-xl">🎯</span>
               <div className="text-left">
-                <p className="text-[10px] font-bold text-white uppercase text-shadow">Today's Targets</p>
-                <p className="text-[7px] text-[#93c5fd] mt-1">Set yesterday</p>
+                <p className="text-sm font-bold text-black uppercase">Today's Targets</p>
+                <p className="text-xs text-black/50 mt-1">Set yesterday</p>
               </div>
             </div>
-            <span className={`text-[10px] font-bold
-              ${allAchieved ? 'text-[#22c55e]' : 'text-white/50'}`}>
+            <span className={`text-sm font-bold
+              ${allAchieved ? 'text-[#22c55e]' : 'text-black/50'}`}>
               {todayDone}/{todayTargets.length}
             </span>
           </div>
@@ -47,24 +47,24 @@ export default function TargetsSection({
               <div
                 key={i}
                 onClick={() => onToggleTarget(i)}
-                className={`flex items-center gap-3 px-3 py-3 cursor-pointer border-4 transition-none
+                className={`flex items-center gap-3 px-3 py-3 cursor-pointer border-[3px] transition-none
                   ${target.done
                     ? 'bg-[#22c55e] border-black text-black'
-                    : 'bg-[#111] border-white/20 text-white/80'}`}
-                style={target.done ? { boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' } : {}}
+                    : 'bg-gray-50 border-black/15 text-black/80'}`}
+                style={target.done ? { boxShadow: '4px 4px 0px #000' } : {}}
               >
-                <div className={`w-6 h-6 border-4 flex items-center justify-center flex-shrink-0
-                  ${target.done ? 'bg-black border-black' : 'border-white/40'}`}>
+                <div className={`w-6 h-6 border-[3px] flex items-center justify-center flex-shrink-0
+                  ${target.done ? 'bg-black border-black' : 'border-black/30'}`}>
                   {target.done && <Check className="w-4 h-4 text-[#22c55e]" strokeWidth={4} />}
                 </div>
-                <span className={`text-[9px] flex-1 uppercase ${target.done ? 'line-through' : ''}`}>
+                <span className={`text-sm flex-1 uppercase ${target.done ? 'line-through' : ''}`}>
                   {target.text}
                 </span>
               </div>
             ))}
             
             {allAchieved && (
-              <p className="text-center text-[8px] text-black font-bold uppercase mt-4 py-2 bg-[#22c55e] border-4 border-black" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+              <p className="text-center text-xs text-black font-bold uppercase mt-4 py-2 bg-[#22c55e] border-[3px] border-black" style={{ boxShadow: '4px 4px 0px #000' }}>
                 ✨ All targets achieved!
               </p>
             )}
@@ -76,33 +76,33 @@ export default function TargetsSection({
       <div className="pixel-card">
         <button
           onClick={() => setShowTomorrow(!showTomorrow)}
-          className="pixel-header flex items-center gap-3 w-full text-left p-3 border-none hover:bg-[#111] focus:outline-none"
+          className="pixel-header flex items-center gap-3 w-full text-left p-3 border-none hover:bg-gray-50 focus:outline-none"
         >
-          <span className="text-[14px]">📋</span>
+          <span className="text-xl">📋</span>
           <div className="flex-1">
-            <p className="text-[10px] font-bold text-white uppercase text-shadow">Tomorrow's Targets</p>
-            <p className="text-[7px] text-[#93c5fd] mt-1">Plan ahead</p>
+            <p className="text-sm font-bold text-black uppercase">Tomorrow's Targets</p>
+            <p className="text-xs text-black/50 mt-1">Plan ahead</p>
           </div>
           <div className="flex items-center gap-3">
             {tomorrowTargets.length > 0 && (
-              <span className="px-2 py-1 bg-[#ef4444] border-2 border-black text-white text-[8px] font-bold text-shadow">
+              <span className="px-2 py-1 bg-[#ef4444] border-2 border-black text-black text-xs font-bold ">
                 {tomorrowTargets.length}
               </span>
             )}
-            {showTomorrow ? <ChevronUp className="w-5 h-5 text-white" /> : <ChevronDown className="w-5 h-5 text-white" />}
+            {showTomorrow ? <ChevronUp className="w-5 h-5 text-black" /> : <ChevronDown className="w-5 h-5 text-black" />}
           </div>
         </button>
 
         {showTomorrow && (
-          <div className="p-4 border-t-4 border-black">
+          <div className="p-4 border-t-[3px] border-black">
             <div className="space-y-3">
               {tomorrowTargets.map((target, i) => (
-                <div key={i} className="flex items-center gap-3 px-3 py-3 bg-[#111] border-4 border-white/20">
-                  <span className="text-white/30 text-[10px]">•</span>
-                  <span className="text-[9px] text-white/80 flex-1 uppercase">{target.text}</span>
+                <div key={i} className="flex items-center gap-3 px-3 py-3 bg-gray-50 border-[3px] border-black/15">
+                  <span className="text-black/30 text-sm">•</span>
+                  <span className="text-sm text-black/80 flex-1 uppercase">{target.text}</span>
                   <button
                     onClick={() => onRemoveTomorrowTarget(i)}
-                    className="text-white/40 hover:text-[#ef4444] transition-none"
+                    className="text-black/40 hover:text-[#ef4444] transition-none"
                   >
                     <X className="w-5 h-5" />
                   </button>

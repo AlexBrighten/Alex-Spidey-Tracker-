@@ -38,11 +38,11 @@ export default function MasterRing({ stats }) {
       {/* Retro Health Bar Progress */}
       <div className="w-full">
         <div className="flex justify-between items-end mb-2">
-          <span className="text-[8px] text-[#93c5fd] uppercase">Progress</span>
-          <span className="text-[8px] text-white uppercase">{totalHours.toFixed(1)} / {GOAL_HOURS} HRS</span>
+          <span className="text-[8px] text-black/60 uppercase">Progress</span>
+          <span className="text-[8px] text-black uppercase">{totalHours.toFixed(1)} / {GOAL_HOURS} HRS</span>
         </div>
         
-        <div className="w-full h-8 bg-black border-4 border-white p-1" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+        <div className="w-full h-8 bg-white border-[3px] border-black p-1" style={{ boxShadow: '2px 2px 0px #000' }}>
           <div 
             className="h-full bg-[#ef4444] transition-all duration-1000 ease-out relative overflow-hidden"
             style={{ width: `${progressPercent}%` }}
@@ -51,7 +51,7 @@ export default function MasterRing({ stats }) {
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(90deg, #000 1px, transparent 1px)', backgroundSize: '10px 10px' }}></div>
           </div>
         </div>
-        <div className="text-center mt-2 text-[10px] text-[#ef4444] text-shadow">
+        <div className="text-center mt-2 text-[10px] text-[#ef4444] ">
           {progressPercent.toFixed(1)}% COMPLETE
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function MasterRing({ stats }) {
           label="Hours Left"
           value={hoursLeft.toFixed(1)}
           unit="hrs"
-          color="text-[#93c5fd]"
+          color="text-black/60"
         />
         <StatCard
           label="Days Left"
@@ -85,11 +85,11 @@ export default function MasterRing({ stats }) {
       </div>
 
       {/* Pace banner */}
-      <div className={`w-full border-4 border-black p-4 text-[9px] uppercase text-center
+      <div className={`w-full border-[3px] border-black p-4 text-[9px] uppercase text-center
         ${isOnTrack
           ? 'bg-[#22c55e] text-black'
           : 'bg-[#f97316] text-black'}`}
-        style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}
+        style={{ boxShadow: '2px 2px 0px #000' }}
       >
         {isOnTrack
           ? `ON TRACK: ${requiredHoursPerDay.toFixed(2)} HRS/DAY NEEDED`
@@ -101,10 +101,10 @@ export default function MasterRing({ stats }) {
 
 function StatCard({ label, value, unit, color }) {
   return (
-    <div className={`bg-[#2a2a35] border-4 border-black p-4 flex flex-col items-center justify-center`} style={{ boxShadow: 'inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.1), 4px 4px 0px rgba(0,0,0,0.3)' }}>
-      <div className="text-[7px] text-white/50 uppercase mb-2 text-center">{label}</div>
-      <div className={`text-[12px] font-bold ${color} text-shadow text-center`}>{value}</div>
-      <div className="text-[7px] text-white/30 uppercase mt-1 text-center">{unit}</div>
+    <div className={`bg-gray-50 border-[3px] border-black p-4 flex flex-col items-center justify-center`} style={{ boxShadow: '2px 2px 0px #000' }}>
+      <div className="text-[7px] text-black/60 uppercase mb-2 text-center">{label}</div>
+      <div className={`text-[12px] font-bold ${color}  text-center`}>{value}</div>
+      <div className="text-[7px] text-black/30 uppercase mt-1 text-center">{unit}</div>
     </div>
   );
 }

@@ -45,21 +45,21 @@ export default function DayGoals({ user }) {
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="pixel-header flex items-center gap-3 w-full text-left p-3 border-none hover:bg-[#111] focus:outline-none"
+        className="pixel-header flex items-center gap-3 w-full text-left p-3 border-none hover:bg-gray-100 focus:outline-none"
       >
         <Target className="w-4 h-4 text-[#ef4444]" />
         <div className="flex-1">
-          <p className="text-[10px] font-bold text-white uppercase text-shadow">Day Goals</p>
-          <p className="text-[7px] text-[#93c5fd] mt-1">Set & track today's goals</p>
+          <p className="text-sm font-bold text-black uppercase ">Day Goals</p>
+          <p className="text-xs text-black/60 mt-1">Set & track today's goals</p>
         </div>
         <div className="flex items-center gap-3">
           {totalCount > 0 && (
             <div className="flex items-center gap-2">
-              <span className={`text-[10px] font-bold ${allDone ? 'text-[#22c55e]' : 'text-white/50'}`}>
+              <span className={`text-sm font-bold ${allDone ? 'text-[#22c55e]' : 'text-black/50'}`}>
                 {completedCount}/{totalCount}
               </span>
               {/* Mini progress bar */}
-              <div className="w-16 h-2 bg-black border-2 border-white/30">
+              <div className="w-16 h-2 bg-white border-2 border-black/30">
                 <div
                   className="h-full transition-all duration-300"
                   style={{
@@ -70,7 +70,7 @@ export default function DayGoals({ user }) {
               </div>
             </div>
           )}
-          {expanded ? <ChevronUp className="w-4 h-4 text-white" /> : <ChevronDown className="w-4 h-4 text-white" />}
+          {expanded ? <ChevronUp className="w-4 h-4 text-black" /> : <ChevronDown className="w-4 h-4 text-black" />}
         </div>
       </button>
 
@@ -83,10 +83,10 @@ export default function DayGoals({ user }) {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="p-4 border-t-4 border-black space-y-3">
+            <div className="p-4 border-t-[3px] border-black space-y-3">
               {/* Goals list */}
               {goals.length === 0 && (
-                <p className="text-[8px] text-white/40 uppercase text-center py-4">
+                <p className="text-xs text-black/40 uppercase text-center py-4">
                   No goals set yet. Add one below!
                 </p>
               )}
@@ -98,17 +98,17 @@ export default function DayGoals({ user }) {
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className={`flex items-center gap-3 px-3 py-3 cursor-pointer border-4 transition-none
+                    className={`flex items-center gap-3 px-3 py-3 cursor-pointer border-[3px] transition-none
                       ${goal.done
                         ? 'bg-[#22c55e] border-black text-black'
-                        : 'bg-[#111] border-white/20 text-white/80'}`}
-                    style={goal.done ? { boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' } : {}}
+                        : 'bg-gray-100 border-black/20 text-black/80'}`}
+                    style={goal.done ? { boxShadow: '2px 2px 0px #000' } : {}}
                   >
                     {/* Checkbox */}
                     <div
                       onClick={() => toggleGoal(goal.id)}
-                      className={`w-6 h-6 border-4 flex items-center justify-center flex-shrink-0 cursor-pointer
-                        ${goal.done ? 'bg-black border-black' : 'border-white/40 hover:border-white/60'}`}
+                      className={`w-6 h-6 border-[3px] flex items-center justify-center flex-shrink-0 cursor-pointer
+                        ${goal.done ? 'bg-white border-black' : 'border-black/40 hover:border-black/60'}`}
                     >
                       {goal.done && <Check className="w-4 h-4 text-[#22c55e]" strokeWidth={4} />}
                     </div>
@@ -124,10 +124,10 @@ export default function DayGoals({ user }) {
                           className="input-base flex-1 py-1"
                           autoFocus
                         />
-                        <button onClick={handleSaveEdit} className="btn-primary px-2 py-1 text-[8px]">
+                        <button onClick={handleSaveEdit} className="btn-primary px-2 py-1 text-xs">
                           Save
                         </button>
-                        <button onClick={() => setEditingId(null)} className="btn-ghost px-2 py-1 text-[8px]">
+                        <button onClick={() => setEditingId(null)} className="btn-ghost px-2 py-1 text-xs">
                           Cancel
                         </button>
                       </div>
@@ -135,7 +135,7 @@ export default function DayGoals({ user }) {
                       <>
                         <span
                           onClick={() => toggleGoal(goal.id)}
-                          className={`text-[9px] flex-1 uppercase cursor-pointer ${goal.done ? 'line-through' : ''}`}
+                          className={`text-sm flex-1 uppercase cursor-pointer ${goal.done ? 'line-through' : ''}`}
                         >
                           {goal.text}
                         </span>
@@ -145,14 +145,14 @@ export default function DayGoals({ user }) {
                           {!goal.done && (
                             <button
                               onClick={(e) => { e.stopPropagation(); handleStartEdit(goal); }}
-                              className="p-1 text-white/30 hover:text-[#93c5fd] transition-none"
+                              className="p-1 text-black/30 hover:text-black/60 transition-none"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
                             </button>
                           )}
                           <button
                             onClick={(e) => { e.stopPropagation(); removeGoal(goal.id); }}
-                            className={`p-1 transition-none ${goal.done ? 'text-black/40 hover:text-black' : 'text-white/30 hover:text-[#ef4444]'}`}
+                            className={`p-1 transition-none ${goal.done ? 'text-black/40 hover:text-black' : 'text-black/30 hover:text-[#ef4444]'}`}
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -165,8 +165,8 @@ export default function DayGoals({ user }) {
 
               {/* All done banner */}
               {allDone && totalCount > 0 && (
-                <div className="text-center text-[8px] text-black font-bold uppercase py-2 bg-[#22c55e] border-4 border-black"
-                     style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+                <div className="text-center text-xs text-black font-bold uppercase py-2 bg-[#22c55e] border-[3px] border-black"
+                     style={{ boxShadow: '2px 2px 0px #000' }}>
                   🎯 All day goals achieved!
                 </div>
               )}

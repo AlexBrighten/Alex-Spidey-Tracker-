@@ -1,30 +1,36 @@
 // src/analytics/StatCard.jsx
 export default function StatCard({ icon, label, value, unit, sub, color = 'brand' }) {
   const colorMap = {
-    brand:   { border: 'border-[#ef4444]', text: 'text-[#ef4444]', bg: 'bg-[#ef4444]' },
-    blue:    { border: 'border-[#3b82f6]', text: 'text-[#93c5fd]', bg: 'bg-[#3b82f6]' },
-    emerald: { border: 'border-[#22c55e]', text: 'text-[#4ade80]', bg: 'bg-[#22c55e]' },
-    purple:  { border: 'border-[#a855f7]', text: 'text-[#d8b4fe]', bg: 'bg-[#a855f7]' },
-    orange:  { border: 'border-[#f97316]', text: 'text-[#fdba74]', bg: 'bg-[#f97316]' },
-    cyan:    { border: 'border-[#06b6d4]', text: 'text-[#67e8f9]', bg: 'bg-[#06b6d4]' },
+    brand:   { border: '#dc2626', text: 'text-[#dc2626]', bg: '#dc2626' },
+    blue:    { border: '#2563eb', text: 'text-[#2563eb]', bg: '#2563eb' },
+    emerald: { border: '#16a34a', text: 'text-[#16a34a]', bg: '#16a34a' },
+    purple:  { border: '#7c3aed', text: 'text-[#7c3aed]', bg: '#7c3aed' },
+    orange:  { border: '#ea580c', text: 'text-[#ea580c]', bg: '#ea580c' },
+    cyan:    { border: '#0891b2', text: 'text-[#0891b2]', bg: '#0891b2' },
   };
   const c = colorMap[color] ?? colorMap.brand;
 
   return (
-    <div className={`bg-black border-4 border-white p-4 flex flex-col`} style={{ boxShadow: `4px 4px 0px ${c.bg.replace('bg-[', '').replace(']', '')}` }}>
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`w-8 h-8 border-4 border-black ${c.bg} flex items-center justify-center text-[12px] text-white shadow-[2px_2px_0px_#000]`}>
+    <div
+      className="bg-white border-[3px] border-black rounded-xl p-4 flex flex-col"
+      style={{ boxShadow: `4px 4px 0px ${c.border}` }}
+    >
+      <div className="flex items-center gap-3 mb-3">
+        <div
+          className="w-9 h-9 border-[3px] border-black rounded-lg flex items-center justify-center text-base"
+          style={{ backgroundColor: c.bg + '22' }}
+        >
           {icon}
         </div>
-        <p className="text-white/50 text-[8px] uppercase leading-tight font-bold">{label}</p>
+        <p className="text-black/50 text-xs uppercase font-bold leading-tight">{label}</p>
       </div>
-      
+
       <div className="flex items-end gap-2 mt-auto">
-        <span className={`text-[16px] font-bold ${c.text} text-shadow`}>{value}</span>
-        {unit && <span className="text-white/40 text-[7px] uppercase mb-1">{unit}</span>}
+        <span className={`text-2xl font-bold ${c.text}`}>{value}</span>
+        {unit && <span className="text-black/40 text-xs uppercase mb-0.5 font-bold">{unit}</span>}
       </div>
-      
-      {sub && <p className="text-white/30 text-[7px] uppercase mt-2">{sub}</p>}
+
+      {sub && <p className="text-black/30 text-xs uppercase mt-2 font-bold">{sub}</p>}
     </div>
   );
 }

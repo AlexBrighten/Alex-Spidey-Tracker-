@@ -26,9 +26,9 @@ const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   const { name, value } = payload[0].payload;
   return (
-    <div className="bg-black border-4 border-white p-3 shadow-[4px_4px_0px_#ef4444]">
-      <p className="text-[#93c5fd] text-[8px] uppercase mb-2">{name}</p>
-      <p className="text-white font-bold text-[8px] uppercase">{value}H</p>
+    <div className="bg-gray-100 border-[3px] border-black p-3 shadow-[4px_4px_0px_#dc2626]">
+      <p className="text-black/50 text-xs uppercase mb-2">{name}</p>
+      <p className="text-black font-bold text-xs uppercase">{value}H</p>
     </div>
   );
 };
@@ -55,8 +55,8 @@ export default function CategoryDonut({ sessions }) {
   return (
     <div>
       <div className="mb-4">
-        <h3 className="text-[10px] font-bold text-white uppercase text-shadow">Focus by Category</h3>
-        <p className="text-[7px] text-[#93c5fd] uppercase mt-1">Total: {total.toFixed(1)} hours</p>
+        <h3 className="text-sm font-bold text-black uppercase ">Focus by Category</h3>
+        <p className="text-xs text-black/50 uppercase mt-1">Total: {total.toFixed(1)} hours</p>
       </div>
 
       <div className="flex items-center gap-4">
@@ -85,9 +85,9 @@ export default function CategoryDonut({ sessions }) {
         <div className="flex-1 space-y-3 min-w-0">
           {data.map(c => (
             <div key={c.name} className="flex items-center gap-2">
-              <span className="w-3 h-3 border-2 border-black flex-shrink-0 shadow-[2px_2px_0px_rgba(0,0,0,0.5)]" style={{ background: c.color }} />
-              <span className="text-white/80 text-[7px] uppercase truncate flex-1">{c.name}</span>
-              <span className="text-white font-bold text-[8px] uppercase tabular-nums">{c.value}H</span>
+              <span className="w-3 h-3 border-2 border-black flex-shrink-0 shadow-[2px_2px_0px_#000]" style={{ background: c.color }} />
+              <span className="text-black/80 text-xs uppercase truncate flex-1">{c.name}</span>
+              <span className="text-black font-bold text-xs uppercase tabular-nums">{c.value}H</span>
             </div>
           ))}
         </div>
@@ -98,9 +98,9 @@ export default function CategoryDonut({ sessions }) {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center h-[160px] text-white/40">
+    <div className="flex flex-col items-center justify-center h-[160px] text-black/40">
       <p className="text-3xl mb-2">👾</p>
-      <p className="text-[8px] uppercase">No category data</p>
+      <p className="text-xs uppercase">No category data</p>
     </div>
   );
 }

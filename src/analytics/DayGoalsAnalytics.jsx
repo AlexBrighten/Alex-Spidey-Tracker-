@@ -50,12 +50,12 @@ export default function DayGoalsAnalytics({ uid }) {
     return (
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <Target className="w-4 h-4 text-[#ef4444]" />
-          <h3 className="text-[10px] font-bold text-white uppercase text-shadow">Day Goals Tracker</h3>
+          <Target className="w-4 h-4 text-[#dc2626]" />
+          <h3 className="text-sm font-bold text-black uppercase ">Day Goals Tracker</h3>
         </div>
-        <div className="flex flex-col items-center justify-center h-[100px] text-white/40">
+        <div className="flex flex-col items-center justify-center h-[100px] text-black/40">
           <p className="text-3xl mb-2">🎯</p>
-          <p className="text-[8px] uppercase">Start setting day goals to see analytics</p>
+          <p className="text-xs uppercase">Start setting day goals to see analytics</p>
         </div>
       </div>
     );
@@ -64,26 +64,26 @@ export default function DayGoalsAnalytics({ uid }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
-        <Target className="w-4 h-4 text-[#ef4444]" />
+        <Target className="w-4 h-4 text-[#dc2626]" />
         <div>
-          <h3 className="text-[10px] font-bold text-white uppercase text-shadow">Day Goals Tracker</h3>
-          <p className="text-[7px] text-[#93c5fd] uppercase mt-1">Last 30 days performance</p>
+          <h3 className="text-sm font-bold text-black uppercase ">Day Goals Tracker</h3>
+          <p className="text-xs text-black/50 uppercase mt-1">Last 30 days performance</p>
         </div>
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-2 mb-4">
-        <div className="bg-black border-2 border-white/20 p-3 text-center">
-          <p className="text-[14px] font-bold text-[#ef4444] text-shadow">{completionRate}%</p>
-          <p className="text-[6px] text-white/40 uppercase mt-1">Completion</p>
+        <div className="bg-gray-100 border-2 border-black/20 p-3 text-center">
+          <p className="text-[14px] font-bold text-[#dc2626] ">{completionRate}%</p>
+          <p className="text-xs text-black/40 uppercase mt-1">Completion</p>
         </div>
-        <div className="bg-black border-2 border-white/20 p-3 text-center">
-          <p className="text-[14px] font-bold text-[#22c55e] text-shadow">{perfectDays}</p>
-          <p className="text-[6px] text-white/40 uppercase mt-1">Perfect Days</p>
+        <div className="bg-gray-100 border-2 border-black/20 p-3 text-center">
+          <p className="text-[14px] font-bold text-[#22c55e] ">{perfectDays}</p>
+          <p className="text-xs text-black/40 uppercase mt-1">Perfect Days</p>
         </div>
-        <div className="bg-black border-2 border-white/20 p-3 text-center">
-          <p className="text-[14px] font-bold text-[#93c5fd] text-shadow">{completedGoals}/{totalGoals}</p>
-          <p className="text-[6px] text-white/40 uppercase mt-1">Goals Done</p>
+        <div className="bg-gray-100 border-2 border-black/20 p-3 text-center">
+          <p className="text-[14px] font-bold text-black/50 ">{completedGoals}/{totalGoals}</p>
+          <p className="text-xs text-black/40 uppercase mt-1">Goals Done</p>
         </div>
       </div>
 
@@ -101,7 +101,7 @@ export default function DayGoalsAnalytics({ uid }) {
           if (total > 0) {
             if (pct >= 1) color = '#22c55e';
             else if (pct >= 0.5) color = '#f59e0b';
-            else color = '#ef4444';
+            else color = '#dc2626';
           }
           
           return (
@@ -115,8 +115,8 @@ export default function DayGoalsAnalytics({ uid }) {
         })}
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-[5px] text-white/30 uppercase">14 days ago</span>
-        <span className="text-[5px] text-white/30 uppercase">Today</span>
+        <span className="text-[5px] text-black/30 uppercase">14 days ago</span>
+        <span className="text-[5px] text-black/30 uppercase">Today</span>
       </div>
     </div>
   );

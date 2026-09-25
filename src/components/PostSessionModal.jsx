@@ -48,7 +48,7 @@ export default function PostSessionModal({ sessionMeta, onLog }) {
         className="fixed inset-x-4 bottom-0 sm:inset-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-8
                    w-full sm:max-w-lg z-50"
       >
-        <div className="glass-card rounded-t-2xl sm:rounded-2xl border border-white/10 p-6 sm:p-8">
+        <div className="glass-card rounded-t-2xl sm:rounded-2xl border-[3px] border-black p-6 sm:p-8">
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30
@@ -56,8 +56,8 @@ export default function PostSessionModal({ sessionMeta, onLog }) {
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white leading-none">Session Complete! 🎉</h2>
-              <p className="text-white/40 text-sm mt-0.5">
+              <h2 className="text-lg font-bold text-black leading-none">Session Complete! 🎉</h2>
+              <p className="text-black/50 text-sm mt-0.5">
                 {sessionMeta?.durationMinutes} min · {sessionMeta?.category}
               </p>
             </div>
@@ -65,16 +65,16 @@ export default function PostSessionModal({ sessionMeta, onLog }) {
 
           {/* Intended goal recap */}
           {sessionMeta?.intendedGoal && (
-            <div className="mb-5 px-4 py-3 rounded-xl bg-white/5 border border-white/8">
-              <p className="text-white/30 text-xs mb-0.5">You set out to:</p>
-              <p className="text-white/70 text-sm">{sessionMeta.intendedGoal}</p>
+            <div className="mb-5 px-4 py-3 rounded-xl bg-gray-50 border-[3px] border-black/10 rounded-xl">
+              <p className="text-black/50 text-xs mb-0.5 font-bold uppercase">You set out to:</p>
+              <p className="text-black text-sm font-bold">{sessionMeta.intendedGoal}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Actual Outcome */}
             <div>
-              <label className="flex items-center gap-1.5 text-sm font-medium text-white/70 mb-2">
+              <label className="flex items-center gap-1.5 text-sm font-bold text-black mb-2">
                 <FileText className="w-3.5 h-3.5" />
                 What did you actually accomplish?
                 <span className="text-red-400 ml-0.5">*</span>
@@ -91,10 +91,10 @@ export default function PostSessionModal({ sessionMeta, onLog }) {
 
             {/* Proof URL */}
             <div>
-              <label className="flex items-center gap-1.5 text-sm font-medium text-white/70 mb-2">
+              <label className="flex items-center gap-1.5 text-sm font-bold text-black mb-2">
                 <Link2 className="w-3.5 h-3.5" />
                 Proof URL
-                <span className="text-white/25 text-xs ml-1">(optional)</span>
+                <span className="text-black/40 text-xs ml-1 font-bold">(optional)</span>
               </label>
               <input
                 type="url"

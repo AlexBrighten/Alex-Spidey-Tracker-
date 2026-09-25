@@ -58,13 +58,13 @@ function buildChartData(sessions) {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-black border-4 border-white p-3 shadow-[4px_4px_0px_#ef4444]">
-      <p className="text-[#93c5fd] text-[8px] uppercase mb-2">{label}</p>
+    <div className="bg-gray-100 border-[3px] border-black p-3 shadow-[4px_4px_0px_#dc2626]">
+      <p className="text-black/50 text-xs uppercase mb-2">{label}</p>
       {payload.map(p => (
-        <div key={p.name} className="flex items-center gap-2 mt-1 text-[8px] uppercase">
+        <div key={p.name} className="flex items-center gap-2 mt-1 text-xs uppercase">
           <span className="w-2 h-2 border border-black" style={{ background: p.color }} />
-          <span className="text-white/80">{p.name}:</span>
-          <span className="text-white font-bold">{p.value}H</span>
+          <span className="text-black/80">{p.name}:</span>
+          <span className="text-black font-bold">{p.value}H</span>
         </div>
       ))}
     </div>
@@ -81,27 +81,27 @@ export default function GoalChart({ sessions }) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-[10px] font-bold text-white uppercase text-shadow">800-Hour Goal Progress</h3>
-          <p className="text-[7px] text-[#93c5fd] uppercase mt-1">Actual cumulative vs. pace</p>
+          <h3 className="text-sm font-bold text-black uppercase ">800-Hour Goal Progress</h3>
+          <p className="text-xs text-black/50 uppercase mt-1">Actual cumulative vs. pace</p>
         </div>
-        <span className={`text-[8px] font-bold px-2 py-1 uppercase border-2 border-black
+        <span className={`text-xs font-bold px-2 py-1 uppercase border-2 border-black
           ${isAhead
             ? 'bg-[#22c55e] text-black'
             : 'bg-[#f97316] text-black'}`}
-          style={{ boxShadow: '2px 2px 0px rgba(0,0,0,0.5)' }}>
+          style={{ boxShadow: '2px 2px 0px #000' }}>
           {isAhead ? '▲ AHEAD' : '▼ BEHIND'} PACE
         </span>
       </div>
       <ResponsiveContainer width="100%" height={220}>
         <AreaChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.1)" vertical={false} />
+          <CartesianGrid strokeDasharray="2 2" stroke="rgba(0,0,0,0.08)" vertical={false} />
           <XAxis dataKey="label" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 7, fontFamily: '"Press Start 2P", monospace' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
           <YAxis tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 7, fontFamily: '"Press Start 2P", monospace' }} axisLine={false} tickLine={false} domain={[0, GOAL]} />
           <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#fff', strokeWidth: 2, strokeDasharray: '4 4' }} />
           <Legend wrapperStyle={{ fontSize: 8, color: '#fff', paddingTop: 8, fontFamily: '"Press Start 2P", monospace' }} />
           <ReferenceLine y={GOAL} stroke="#fff" strokeWidth={2} strokeDasharray="4 4" label={{ value: '800H GOAL', fill: '#fff', fontSize: 7, fontFamily: '"Press Start 2P", monospace' }} />
           <Area type="stepAfter" dataKey="pace"   name="Req. Pace" stroke="#3b82f6" strokeWidth={3} fill="#3b82f6" fillOpacity={0.2} dot={false} />
-          <Area type="stepAfter" dataKey="actual" name="Actual"  stroke="#ef4444" strokeWidth={3} fill="#ef4444" fillOpacity={0.5} dot={false} activeDot={{ r: 0 }} />
+          <Area type="stepAfter" dataKey="actual" name="Actual"  stroke="#dc2626" strokeWidth={3} fill="#dc2626" fillOpacity={0.5} dot={false} activeDot={{ r: 0 }} />
         </AreaChart>
       </ResponsiveContainer>
     </div>
@@ -110,9 +110,9 @@ export default function GoalChart({ sessions }) {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center h-[220px] text-white/40">
+    <div className="flex flex-col items-center justify-center h-[220px] text-black/40">
       <p className="text-3xl mb-2">👾</p>
-      <p className="text-[8px] uppercase">No data yet</p>
+      <p className="text-xs uppercase">No data yet</p>
     </div>
   );
 }

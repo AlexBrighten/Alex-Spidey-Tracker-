@@ -26,11 +26,11 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   const v = payload[0]?.value;
   return (
-    <div className="bg-black border-4 border-white p-3 shadow-[4px_4px_0px_#ef4444]">
-      <p className="text-[#93c5fd] text-[8px] uppercase mb-2">{label}</p>
+    <div className="bg-gray-100 border-[3px] border-black p-3 shadow-[4px_4px_0px_#dc2626]">
+      <p className="text-black/50 text-xs uppercase mb-2">{label}</p>
       {v != null
-        ? <><p className="text-white font-bold text-[8px] uppercase">{v}%</p><p className="text-white/80 text-[7px] mt-1">{payload[0].payload.score}/{TOTAL} HABITS</p></>
-        : <p className="text-white/40 text-[7px] uppercase">NO DATA</p>}
+        ? <><p className="text-black font-bold text-xs uppercase">{v}%</p><p className="text-black/80 text-xs mt-1">{payload[0].payload.score}/{TOTAL} HABITS</p></>
+        : <p className="text-black/40 text-xs uppercase">NO DATA</p>}
     </div>
   );
 };
@@ -42,13 +42,13 @@ export default function HabitTrend({ habitDays }) {
   return (
     <div>
       <div className="mb-4">
-        <h3 className="text-[10px] font-bold text-white uppercase text-shadow">Habit Score — Last 14 Days</h3>
-        <p className="text-[7px] text-[#93c5fd] uppercase mt-1">Daily completion</p>
+        <h3 className="text-sm font-bold text-black uppercase ">Habit Score — Last 14 Days</h3>
+        <p className="text-xs text-black/50 uppercase mt-1">Daily completion</p>
       </div>
       {!hasData ? <EmptyState /> : (
         <ResponsiveContainer width="100%" height={170}>
           <AreaChart data={data} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.1)" vertical={false} />
+            <CartesianGrid strokeDasharray="2 2" stroke="rgba(0,0,0,0.08)" vertical={false} />
             <XAxis dataKey="label" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 7, fontFamily: '"Press Start 2P", monospace' }} axisLine={false} tickLine={false} />
             <YAxis domain={[0, 100]} tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 7, fontFamily: '"Press Start 2P", monospace' }} axisLine={false} tickLine={false}
                    tickFormatter={v => `${v}%`} />
@@ -70,9 +70,9 @@ export default function HabitTrend({ habitDays }) {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center h-[170px] text-white/40">
+    <div className="flex flex-col items-center justify-center h-[170px] text-black/40">
       <p className="text-3xl mb-2">👾</p>
-      <p className="text-[8px] uppercase">No habit data</p>
+      <p className="text-xs uppercase">No habit data</p>
     </div>
   );
 }

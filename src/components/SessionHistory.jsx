@@ -61,7 +61,7 @@ export default function SessionHistory({ sessions }) {
     return (
       <div className="glass-card rounded-2xl p-10 text-center">
         <div className="text-5xl mb-4">🎯</div>
-        <p className="text-white/50 text-sm">No sessions yet. Start your first deep work session!</p>
+        <p className="text-black/50 text-sm">No sessions yet. Start your first deep work session!</p>
       </div>
     );
   }
@@ -78,7 +78,7 @@ export default function SessionHistory({ sessions }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35, delay: idx < 5 ? idx * 0.05 : 0 }}
-              className="glass-card rounded-xl p-5 border border-white/5 hover:border-white/10 transition-colors"
+              className="glass-card rounded-xl p-5 border-[3px] border-black hover:shadow-[6px_6px_0px_#000] transition-colors"
             >
               <div className="flex items-start justify-between gap-4">
                 {/* Left */}
@@ -90,7 +90,7 @@ export default function SessionHistory({ sessions }) {
                       {session.category}
                     </span>
                     {/* Duration badge */}
-                    <span className="badge bg-white/5 border-white/10 text-white/50">
+                    <span className="badge bg-white/5 border-black/10 text-black/50">
                       <Clock className="w-3 h-3" />
                       {session.durationMinutes} min
                     </span>
@@ -98,13 +98,13 @@ export default function SessionHistory({ sessions }) {
 
                   {/* Intended Goal */}
                   {session.intendedGoal && (
-                    <p className="text-white/40 text-xs mb-1 truncate">
-                      <span className="text-white/25">Goal: </span>{session.intendedGoal}
+                    <p className="text-black/40 text-xs mb-1 truncate">
+                      <span className="text-black/25">Goal: </span>{session.intendedGoal}
                     </p>
                   )}
 
                   {/* Actual Outcome */}
-                  <p className="text-white/80 text-sm leading-relaxed">
+                  <p className="text-black/80 text-sm leading-relaxed">
                     {session.actualOutcome}
                   </p>
 
@@ -124,7 +124,7 @@ export default function SessionHistory({ sessions }) {
 
                 {/* Right — timestamp */}
                 <div className="text-right flex-shrink-0">
-                  <p className="text-white/25 text-xs">{formatDate(session.timestamp)}</p>
+                  <p className="text-black/25 text-xs">{formatDate(session.timestamp)}</p>
                   <p className={`text-sm font-bold mt-1 ${meta.color}`}>
                     +{(session.durationMinutes / 60).toFixed(2)}h
                   </p>

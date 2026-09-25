@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -14,116 +14,176 @@
   }
 
   body {
-    @apply bg-surface text-white antialiased;
-    background: #1a4175; /* Retro blue frame */
+    @apply text-black antialiased;
+    /* Spidey-inspired background: light blue-grey with a darker blue web/grid */
+    background-color: #f4f8ff; 
+    background-image:
+      linear-gradient(rgba(29, 78, 216, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(29, 78, 216, 0.1) 1px, transparent 1px);
+    background-size: 32px 32px;
     min-height: 100vh;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    line-height: 1.5;
-    image-rendering: pixelated;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
   }
 
   ::-webkit-scrollbar {
-    width: 12px;
+    width: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #020617;
-    border-left: 2px solid #000;
+    background: #f4f8ff;
   }
   ::-webkit-scrollbar-thumb {
-    background: #ef4444;
-    border: 2px solid #000;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #dc2626;
+    background: #1d4ed8;
+    border-radius: 999px;
+    border: 2px solid #f4f8ff;
   }
 }
 
 @layer components {
-  /* 8-bit Retro Card */
+  /* Neobrutalist Card - Spidey Blue Shadow */
   .pixel-card {
-    background: #2a2a35; /* Dark grey CRT screen */
-    border: 4px solid #000;
-    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.1), 4px 4px 0px rgba(0,0,0,0.3);
+    background: #ffffff;
+    border: 3px solid #000;
+    border-radius: 16px;
+    box-shadow: 6px 6px 0px #1d4ed8; /* Blue shadow */
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+
+  .pixel-card:hover {
+    box-shadow: 8px 8px 0px #dc2626; /* Shifts to Red shadow on hover! */
+    transform: translate(-2px, -2px);
   }
 
   .pixel-header {
-    background: #020617;
-    border-bottom: 4px solid #000;
-    color: #93c5fd;
-    padding: 12px;
+    background: #1d4ed8; /* Spidey Blue */
+    border-bottom: 3px solid #000;
+    color: #ffffff;
+    padding: 14px 16px;
+    font-weight: 700;
     text-transform: uppercase;
     text-align: center;
-    text-shadow: 2px 2px 0 #000;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    border-radius: 13px 13px 0 0;
+  }
+
+  /* Glass card for modals / session history */
+  .glass-card {
+    background: #ffffff;
+    border: 3px solid #000;
+    border-radius: 16px;
+    box-shadow: 6px 6px 0px #dc2626; /* Red shadow */
   }
 
   /* Input styles */
   .input-base {
-    @apply w-full bg-[#111] border-4 border-black px-4 py-3 text-white placeholder-white/30
-           focus:outline-none focus:border-brand-500 focus:bg-black transition-none;
-    box-shadow: inset 4px 4px 0 rgba(0,0,0,0.8);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-  }
-
-  /* Primary button */
-  .btn-primary {
-    @apply relative overflow-hidden text-white uppercase rounded-none
-           px-6 py-4 transition-none active:translate-y-1 active:translate-x-1 disabled:opacity-40 disabled:cursor-not-allowed;
-    background: #dc2626;
-    border: 4px solid #000;
-    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.4), inset 4px 4px 0px rgba(255,255,255,0.3), 4px 4px 0px rgba(0,0,0,0.5);
-    text-shadow: 2px 2px 0px #000;
+    @apply w-full bg-white border-[3px] border-black px-4 py-3 text-black placeholder-black/30
+           focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] rounded-xl;
+    box-shadow: 3px 3px 0px #000;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
   }
   
+  .input-base:focus {
+    box-shadow: 4px 4px 0px #dc2626;
+  }
+
+  /* Primary button — Spidey Red */
+  .btn-primary {
+    @apply relative overflow-hidden text-white uppercase font-bold rounded-xl
+           px-6 py-4 transition-all active:translate-y-[2px] active:translate-x-[2px]
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    background: #dc2626;
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0px #1d4ed8; /* Blue shadow for contrast */
+    letter-spacing: 0.04em;
+  }
+  
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 7px 7px 0px #1d4ed8;
+    transform: translate(-2px, -2px);
+  }
+
   .btn-primary:active:not(:disabled) {
-    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.4), 0px 0px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 0px #1d4ed8;
+    transform: translate(2px, 2px);
   }
 
   /* Ghost button */
   .btn-ghost {
-    @apply bg-[#333] border-4 border-black text-white/80 uppercase rounded-none
-           px-5 py-3 transition-none active:translate-y-1 active:translate-x-1;
-    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.4), inset 4px 4px 0px rgba(255,255,255,0.2), 4px 4px 0px rgba(0,0,0,0.5);
+    @apply bg-white border-[3px] border-black text-black uppercase font-bold rounded-xl
+           px-5 py-3 transition-all active:translate-y-[2px] active:translate-x-[2px];
+    box-shadow: 4px 4px 0px #000;
+    letter-spacing: 0.04em;
   }
+  
+  .btn-ghost:hover {
+    @apply bg-[#1d4ed8] text-white;
+    box-shadow: 5px 5px 0px #dc2626;
+    transform: translate(-1px, -1px);
+  }
+  
   .btn-ghost:active {
-    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.4), 0px 0px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 0px #dc2626;
+    transform: translate(2px, 2px);
   }
 
   /* Category badge */
   .badge {
-    @apply inline-flex items-center gap-2 text-[8px] uppercase px-3 py-2 border-2 border-black bg-[#444];
-    box-shadow: 2px 2px 0px #000;
+    @apply inline-flex items-center gap-2 text-xs uppercase font-bold px-3 py-1.5
+           border-[3px] border-black bg-white rounded-full transition-transform;
+    box-shadow: 3px 3px 0px #dc2626;
+  }
+  
+  .badge:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #1d4ed8;
   }
 
   /* Preset duration button */
   .preset-btn {
-    @apply px-4 py-3 border-4 border-black text-[9px] uppercase transition-none active:translate-y-1 active:translate-x-1;
-    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.2), 4px 4px 0px rgba(0,0,0,0.5);
+    @apply px-4 py-3 border-[3px] border-black text-xs font-bold uppercase rounded-xl
+           transition-all active:translate-y-[2px] active:translate-x-[2px];
+    box-shadow: 3px 3px 0px #000;
   }
+  
+  .preset-btn:hover:not(.preset-btn-active) {
+    box-shadow: 4px 4px 0px #1d4ed8;
+    transform: translate(-1px, -1px);
+  }
+
   .preset-btn:active {
-    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.4), 0px 0px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 0px #000;
+    transform: translate(2px, 2px);
   }
 
   .preset-btn-active {
-    @apply bg-brand-500 text-white;
-    text-shadow: 2px 2px 0px #000;
+    @apply bg-[#dc2626] text-white;
+    box-shadow: 4px 4px 0px #1d4ed8;
   }
 
   .preset-btn-inactive {
-    @apply bg-[#444] text-white/70;
+    @apply bg-white text-black;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    color: #ef4444;
-    text-shadow: 2px 2px 0px #000;
+    background: linear-gradient(135deg, #dc2626 0%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
   }
 
   .timer-glow {
-    text-shadow: 4px 4px 0px #000;
-    color: #ef4444;
+    font-weight: 800;
+    color: #000;
+    text-shadow: 3px 3px 0px #dc2626, -2px -2px 0px #1d4ed8;
   }
 
+  .text-shadow {
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.15);
+  }
 }

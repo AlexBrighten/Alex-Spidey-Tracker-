@@ -3,7 +3,6 @@ export const HABIT_CATEGORIES = [
   { id: 'spiritual', name: 'Spiritual',          icon: '🙏', color: '#a855f7' },
   { id: 'health',   name: 'Health & Discipline', icon: '💪', color: '#22c55e' },
   { id: 'career',   name: 'Career & Growth',     icon: '💻', color: '#3b82f6' },
-  { id: 'relapses', name: 'Accountability',       icon: '⚠️', color: '#dc2626' },
 ];
 
 export const HABITS = [
@@ -57,24 +56,11 @@ export const HABITS = [
     id: 'linkedinPost', name: 'LinkedIn Post',   category: 'career', emoji: '💼', hasDetails: true,
     detailField: { key: 'postTopic', label: 'What did you post about?',placeholder: 'e.g., React hooks journey', type: 'tags' },
   },
-
-  // ── Accountability (Relapse Trackers) ──────────────────────────────────────
-  // These are INVERSE habits: checking = relapse (bad). NOT checking = clean day (good).
-  {
-    id: 'masturbationRelapse', name: 'Masturbation', category: 'relapses', emoji: '🍆', hasDetails: true, isRelapse: true,
-    detailField: { key: 'trigger', label: 'What triggered this?', placeholder: 'e.g., Boredom, stress, late night scrolling...', multiline: true },
-  },
-  {
-    id: 'pornRelapse', name: 'Porn', category: 'relapses', emoji: '🔞', hasDetails: true, isRelapse: true,
-    detailField: { key: 'trigger', label: 'What triggered this?', placeholder: 'e.g., Instagram reels, alone at home...', multiline: true },
-  },
 ];
 
 export function getHabitById(id)         { return HABITS.find(h => h.id === id); }
 export function getHabitsByCategory(cat) { return HABITS.filter(h => h.category === cat); }
 export function getCategoryById(id)      { return HABIT_CATEGORIES.find(c => c.id === id); }
-export function getRelapseHabits()       { return HABITS.filter(h => h.isRelapse); }
-export function getNonRelapseHabits()    { return HABITS.filter(h => !h.isRelapse); }
 
 export function getEmptyDayData() {
   const habits = {};
